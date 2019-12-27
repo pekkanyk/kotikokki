@@ -1,0 +1,19 @@
+.bottom-buffer {
+    margin-bottom: 20px;
+}
+
+.bottom-buffer-big {
+    margin-bottom: 30px;
+}
+
+.top-buffer {
+    margin-top: 20px;
+}
+
+.noBorder {
+    border:none;
+}
+
+.noBorder:focused {
+    border:none;
+}

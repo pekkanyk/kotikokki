@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${otsikko})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        <div class="container">
+                        
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <form method="POST" th:action="@{/reseptit/etsi}">
+                        <input type="text" name="nimi" placeholder="Etsi reseptejä"/>
+                        <input type="submit" value="Etsi"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row bottom-buffer" th:if="${kirjautunut=='true'}">
+                <div class="col-xs-12 col-12">
+                    <a th:href="@{/reseptit/lisaa}">Lisää uusi resepti.</a>
+                </div>
+            </div>
+            
+            <div class="row">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Resepti</th>
+                        <th>Tyyppi</th>
+                        <th>Lisätty</th>
+                        <th>Lisääjä</th>
+                        <th>Tominnot</th>
+                    </tr>
+                </thead>
+                    <tr th:each="resepti : ${reseptit}" class="table">
+                        <td><a th:href="@{/resepti/{id}(id=${resepti.id})}"><div th:text="${resepti.nimi}"/></a></td>
+                        <td></td>
+                        <td th:text="${#temporals.format(resepti.lisatty, 'dd.MM.yyyy')}"></td>
+                        <td th:text="${resepti.tili.kokoNimi}" th:if="${kirjautunut=='true'}"></td>
+                        <td th:unless="${kirjautunut=='true'}">---</td>
+                        <td>
+                            <a th:if="${username == resepti.tili.username}" th:href="@{/resepti/{id}/editoi(id=${resepti.id})}"><img th:src="@{/img/ico_write.gif}" title="muokkaa"/></a>
+                            <a th:if="${username == resepti.tili.username}" th:href="@{/resepti/{id}/poista(id=${resepti.id})}"><img th:src="@{/img/ico_remove.gif}" title="poista"/></a>
+                            <a th:if="${kirjautunut=='true'}" th:href="@{/resepti/{id}/ruokalistaan(id=${resepti.id})}"><img th:src="@{/img/ico_add.gif}" title="lisää ruokalistaan"/></a>
+                            <a th:if="${username == resepti.tili.username}" th:href="@{/resepti/{id}/julkiseksi(id=${resepti.id})}"><img th:src="@{/img/ico_public.gif}" title="merkkaa julkiseksi"/></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+        </div>
+        
+    </body>
+</html>

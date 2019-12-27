@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${otsikko})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        <div class="container">
+            <form method="POST" th:action="@{/reseptit/lisaa}" enctype="multipart/form-data" id="lisaa_resepti">
+                
+                
+            <div class="row">
+                <div class="col-xs-12 col-12"><b>Lisää uusi resepti</b></div>
+            </div>
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <input type="text" name="nimi" placeholder="Reseptin nimi"/>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-xs-12 col-12">Raaka-aineet:</div>
+            </div>
+                
+            
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <input type="text" id="raakaAine" placeholder="Raaka-aine"/>
+                    <input type="text" id="maara" placeholder="Määrä"/>
+                    <select name="yksikko" id="yksikko">
+                        <option value=""></option>
+                        <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
+                    </select>
+                    <input type="button" onclick="uusiRivi()" value="OK"/>
+                </div>
+            </div>
+                
+            <section id="ainekset">
+                
+            </section>
+                
+                
+            <!--    
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                     <input type="file" name="kuva" id="picture"/>
+                 </div>
+            </div>    
+            -->
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <textarea form ="lisaa_resepti" name="ohje" cols="70" rows="15" wrap="soft" placeholder="Reseptin ohje"></textarea>
+                </div>
+            </div>
+                
+            
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <input type="hidden" name=tiliId th:value="${tili.id}"/>
+                    <input type="submit" value="Lisää resepti"/>
+                </div>
+            </div>
+            </form>
+        </div>
+        <script th:inline="javascript"> var contextRoot = /*[[@{/}]]*/ '';</script>
+        <script th:src="@{/javascript/raakaAineOption.js}" defer></script>
+    </body>
+</html>

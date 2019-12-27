@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title='Kotikokki')" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <h2>Luo uusi tili</h2>
+                </div>
+            </div>
+            
+        
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <form method="POST" th:action="@{/rekisteroidy}">
+                        <input type="text" name="username" placeholder="käyttäjänimi"/>
+                        <input type="password" name="password" placeholder="salasana"/>
+                        <input type="password" name="password2" placeholder="salasana uudelleen"/>
+                        <input type="text" name="kokoNimi" placeholder="Matti Meikäläinen"/>
+                        <input type="submit" value="Luo tili"/>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    Mikäli valitsemasi käyttäjätunnus on jo käytössä, tulee käyttäjätunnus vaihtaa.
+                </div>
+            </div>
+            
+            
+        </div>
+        
+    </body>
+</html>

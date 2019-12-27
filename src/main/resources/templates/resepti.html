@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${resepti.nimi})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-12"><h2 th:text="${resepti.nimi}">Resepti</h2></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-12">Raaka-aineet:</div>
+            </div>
+            
+            <div class="row">
+                <ul>
+                    <li th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" 
+                        th:text="${reseptiRaakaAine.maara + ' '+
+                        reseptiRaakaAine.yksikko + ' ' +
+                        reseptiRaakaAine.raakaAine.nimi}"/>
+                    
+                </ul>
+            </div>
+            
+            <div th:if="${username==resepti.tili.username}" class="row">
+                 <div class="col-xs-12 col-12">
+                    <form method="POST" th:action="@{/resepti/{id}/kuva(id=${resepti.id})}" enctype="multipart/form-data">
+                    <input type="file" name="kuva" id="picture"/>
+                    <input type="submit" value="Lisää kuva!"/>
+                </form>
+                     <a th:href="@{/resepti/{id}/editoi(id=${resepti.id})}">Muokkaa</a>
+                 </div>
+             </div>    
+                
+                
+            
+            <div class="row top-buffer">
+                <div class="col-xs-12 col-12"><pre th:text="${resepti.ohje}"/></div>
+                
+            </div>
+        </div>
+        
+    </body>
+</html>

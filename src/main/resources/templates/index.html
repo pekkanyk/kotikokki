@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title='Kotikokki')" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        <div class="container" >
+            <div class="row" th:if="${uusi}">
+                <div class="col-xs-12 col-12" th:text="${error}"/>
+            </div>
+            
+            <div class="row" th:if="${kirjautunut=='false'}">
+                <div class="col-xs-12 col-12">
+                    Julkisiksi merkattuja reseptejä voi selata myös ilman kirjautumista.
+                </div>
+                <div class="col-xs-12 col-12">
+                    Mikäli sinulla on jo tunnus, kirjaudu sisään ylävalikosta.
+                </div>
+                <div class="col-xs-12 col-12">
+                    Voit luoda uuden tunnuksen täältä -> <a th:href="@{/rekisteroidy}">Luo uusi tunnus</a>
+                </div>
+            </div>
+            
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <h2>Sivuston statistiikkaa</h2>
+                </div>
+            </div>
+            
+            
+        </div>
+        
+    </body>
+</html>

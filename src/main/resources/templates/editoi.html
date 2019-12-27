@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${resepti.nimi})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        <div class="container">
+            <form method="POST" th:action="@{/reseptit/{id}/tallenna(id=${resepti.id})}" enctype="multipart/form-data" id="lisaa_resepti">
+                
+                
+            <div class="row">
+                <div class="col-xs-12 col-12"><b>Reseptin editointi</b></div>
+            </div>
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <!--<input type="text" name="nimi" placeholder="Reseptin nimi"/>-->
+                <input type="text" name="nimi" th:value="${resepti.nimi}" id="nimi" class="noBorder" readonly="readonly"/>
+                <input type="button" value="EDIT" id="niminappi" onclick="editNimi()"/>
+                    
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-xs-12 col-12">Raaka-aineet:</div>
+            </div>
+                
+            
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <input type="text" id="raakaAine" placeholder="Raaka-aine"/>
+                    <input type="text" id="maara" placeholder="Määrä"/>
+                    <select name="yksikko" id="yksikko">
+                        <option value=""></option>
+                        <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
+                    </select>
+                    <input type="button" onclick="uusiRivi()" value="OK"/>
+                </div>
+            </div>
+                
+            
+            <div class='row'>
+                <div class="col-xs-12 col-12">
+                <table id='ainekset'>
+                    <tr>
+                        <th>Raaka-aine</th>
+                        <th>Määrä</th>
+                        <th>Yksikkö</th>
+                        <th></th>
+                    </tr>
+                    <tr th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" th:id="${reseptiRaakaAine.raakaAine.nimi}">
+                        <td th:text="${reseptiRaakaAine.raakaAine.nimi}"></td>
+                        <td th:text="${reseptiRaakaAine.maara}"></td>
+                        <td th:text="${reseptiRaakaAine.yksikko}"></td>
+                        <td>
+                            <input value="del" th:onclick="poistaRaakaAine([[${reseptiRaakaAine.raakaAine.nimi}]])" type="button"></input>
+                            <input type="hidden" name="raakaAine" th:value="${reseptiRaakaAine.raakaAine.nimi}"/>
+                            <input type="hidden" name="maara" th:value="${reseptiRaakaAine.maara}"/>
+                            <input type="hidden" name="yksikko" th:value="${reseptiRaakaAine.yksikko}"/>
+                        </td>
+                    </tr>
+                    
+                </table>
+                </div>
+            </div>    
+                
+           
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <textarea form ="lisaa_resepti" name="ohje" cols="70" rows="15" wrap="soft" th:text="${resepti.ohje}"></textarea>
+                </div>
+            </div>
+                
+            
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <input type="submit" value="Tallenna"/>
+                </div>
+            </div>
+            </form>
+        </div>
+        <script th:inline="javascript"> var contextRoot = /*[[@{/}]]*/ '';</script>
+        <script th:src="@{/javascript/reseptiEdit.js}" defer></script>
+    </body>
+</html>

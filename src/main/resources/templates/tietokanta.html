@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${otsikko})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        
+        <div class="container">
+            
+            <div class="row">
+                <div class="col-xs-12 col-12"><b>Lisää uusi</b></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <form method="POST" th:action="@{/tietokanta/raakaAine}">
+                        <input type="text" name="nimi" placeholder="Raaka-aine"/>
+                        <input type="submit" value="Lisää"/>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <form method="POST" th:action="@{/tietokanta/yksikko}">
+                        <input type="text" name="nimi" placeholder="Yksikkö"/>
+                        <input type="text" name="kerroin" placeholder="Kerroin"/>
+                        <input type="submit" value="Lisää"/>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-12"><b>Tietokannassa olevat raaka-aineet</b></div>
+            </div>
+            
+            <div th:each="raakaAine : ${raakaAineet}" class="row">
+                <div th:text="${raakaAine.nimi}" class="col-12"/>
+            </div>
+            
+            
+            <div class="row">
+                <div class="col-xs-12 col-12"><b>Tietokannassa olevat yksiköt</b></div>
+            </div>
+            
+            <div th:each="yksikko : ${yksikot}" class="row">
+                <div class="col-12">
+                <form method="GET" th:action="@{/tietokanta/yksikko/{id}/delete(id=${yksikko.id})}">
+                    <label for="nappi" th:text="${yksikko.nimi}"/>
+                    <input type="submit" value="DEL" name="nappi"/>
+                </form>
+                </div>
+            </div>
+            
+            
+        </div>    
+            
+            
+    </body>
+</html>

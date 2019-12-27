@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:fragment="head(title)" lang="en">
+        <meta charset="UTF-8" />
+        <title th:text="${title}">Layout</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    </head>
+    <body>
+        <header th:fragment="header">
+            <nav class="container" th:if="${kirjautunut=='true'}">
+                <div class="row bottom-buffer-big">
+                <div class="col-xs-12 col-md-2"><a th:href="@{/}">Etusivu</a></div>
+                <div class="col-xs-12 col-md-2"><a th:href="@{/reseptit}">Reseptit</a></div>
+                <div class="col-xs-12 col-md-2"><a th:href="@{/ruokalista}">Ruokalista</a></div>
+                <div class="col-xs-12 col-md-2"><a th:href="@{/kauppalista}">Kauppalista</a></div>
+                <div class="col-xs-12 col-md-2"><a th:href="@{/logout}">Logout</a></div>
+                
+                <div class="col-xs-12 col-md-2"><a th:href="@{/tietokanta}" th:if="${1==1}">Admin tools</a></div>
+                </div>
+            </nav>
+            
+            <nav class="container" th:unless="${kirjautunut=='true'}">
+                <div class="row bottom-buffer-big">
+                    <div class="col-xs-12 col-md-2"><a th:href="@{/}">Etusivu</a></div>
+                    <div class="col-xs-12 col-md-2"><a th:href="@{/reseptit}">Reseptit</a></div>
+                    <div class="col-xs-12 col-md-2"><a th:href="@{/rekisteroidy}">Rekisteröidy</a></div>
+                    <div class="col-xs-12 col-md-2"><a th:href="@{/login}">Kirjaudu</a></div>
+                </div>
+            </nav>
+        </header>
+    </body>
