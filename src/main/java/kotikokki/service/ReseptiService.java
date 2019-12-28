@@ -33,9 +33,10 @@ public class ReseptiService {
     @Autowired
     private TiliService tiliService;
     
-    public void lisaaUusi(String nimi, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje, Long tiliId){
+    public void lisaaUusi(String nimi, List<String> valinnat, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje, Long tiliId){
         Resepti resepti = new Resepti();
         resepti.setNimi(nimi);
+        if (valinnat.contains("julkinen")) resepti.setJulkinen(true);
         resepti.setOhje(ohje);
         resepti.setLisatty(LocalDateTime.now());
         resepti.setTili(tiliService.haeTiliIdlla(tiliId));
@@ -52,15 +53,18 @@ public class ReseptiService {
         //return r;
     }
     
-    public void editoiResepti(Long id, String nimi, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje){
+    public void editoiResepti(Long id, String nimi, List<String> valinnat, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje){
         Resepti resepti = reseptiRepo.getOne(id);
         List<ReseptiRaakaAine> vanhat = reseptiRaakaAineRepo.findByResepti(resepti);
         List<ReseptiRaakaAine> uudet = new ArrayList<>();
         List<ReseptiRaakaAine> poistettavat = new ArrayList<>();
         List<ReseptiRaakaAine> lisattavat = new ArrayList<>();
+        resepti.setJulkinen(false);
+        if (valinnat.contains("julkinen")) resepti.setJulkinen(true);
+        
         resepti.setNimi(nimi);
         resepti.setOhje(ohje);
-        
+        reseptiRepo.save(resepti);
         for (int i=0; i<raakaAineet.size();i++){
             ReseptiRaakaAine rra = new ReseptiRaakaAine();
             rra.setRaakaAine(raakaAineService.lisaaJosEiOlemassa(raakaAineet.get(i)));

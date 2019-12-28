@@ -17,12 +17,20 @@
                 
             <div class="row">
                 <div class="col-xs-12 col-12">
-                    <!--<input type="text" name="nimi" placeholder="Reseptin nimi"/>-->
                 <input type="text" name="nimi" th:value="${resepti.nimi}" id="nimi" class="noBorder" readonly="readonly"/>
                 <input type="button" value="EDIT" id="niminappi" onclick="editNimi()"/>
                     
                 </div>
+            </div>
+                
+            <div class="row">
+                <div class="col-xs-12 col-12">
+                    <label for="valinnat">Merkkaa julkiseksi</label>
+                    <input th:if="${resepti.julkinen==true}" type="checkbox" name="valinnat" value="julkinen" checked=""/>
+                    <input th:unless="${resepti.julkinen==true}" type="checkbox" name="valinnat" value="julkinen"/>
+                </div>
             </div>    
+                
             <div class="row">
                 <div class="col-xs-12 col-12">Raaka-aineet:</div>
             </div>
@@ -79,6 +87,7 @@
             
             <div class="row">
                 <div class="col-xs-12 col-12">
+                    <input type="hidden" name="valinnat" value="resepti"/>
                     <input type="submit" value="Tallenna"/>
                 </div>
             </div>

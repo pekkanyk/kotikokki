@@ -8,9 +8,9 @@
 		<version>2.2.2.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.pekkanyk</groupId>
 	<artifactId>kotikokki</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>kotikokki</name>
 	<description>Resepti ja ruokalistaohjelma.</description>
 
@@ -19,13 +19,7 @@
 	</properties>
 
 	<dependencies>
-				               
-                <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                 </dependency>
-                 
-                 <dependency>
+	<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>

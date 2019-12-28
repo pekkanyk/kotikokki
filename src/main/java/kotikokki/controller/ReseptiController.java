@@ -64,13 +64,14 @@ public class ReseptiController {
     }
     
     @PostMapping("/reseptit/lisaa")
-    public String lisaaResepti(@RequestParam String nimi, 
+    public String lisaaResepti(@RequestParam String nimi,
+                                @RequestParam("valinnat") List<String> valinnat,
                                 @RequestParam("raakaAine") List<String> raakaAineet,
                                 @RequestParam("maara") List<Double> maarat,
                                 @RequestParam("yksikko") List<String> yksikot,
                                 @RequestParam String ohje,
                                 @RequestParam Long tiliId){
-        reseptiService.lisaaUusi(nimi, raakaAineet, maarat, yksikot, ohje, tiliId);
+        reseptiService.lisaaUusi(nimi, valinnat, raakaAineet, maarat, yksikot, ohje, tiliId);
         return "redirect:/reseptit";
     }
     
@@ -102,7 +103,8 @@ public class ReseptiController {
     
     @PostMapping("/reseptit/{id}/tallenna")
     public String editoiResepti(@PathVariable Long id,
-                                @RequestParam String nimi, 
+                                @RequestParam String nimi,
+                                @RequestParam("valinnat") List<String> valinnat,
                                 @RequestParam("raakaAine") List<String> raakaAineet,
                                 @RequestParam("maara") List<Double> maarat,
                                 @RequestParam("yksikko") List<String> yksikot,
@@ -110,7 +112,7 @@ public class ReseptiController {
                                 Principal principal){
         Resepti r = reseptiService.haeResepti(id);
         if (r.getTili().getUsername().equals(principal.getName())){
-            reseptiService.editoiResepti(id, nimi, raakaAineet, maarat, yksikot, ohje);
+            reseptiService.editoiResepti(id, nimi, valinnat, raakaAineet, maarat, yksikot, ohje);
             return "redirect:/resepti/"+id;
         }
         else return "redirect:/resepti/"+id;
