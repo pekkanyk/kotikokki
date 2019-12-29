@@ -8,22 +8,24 @@
         <header th:replace="fragments/layout :: header"></header>
         
         <div class="container">
-            <div class="row">
+            <div class="row bottom-buffer">
                 <div class="col-xs-12 col-12"><h2 th:text="${resepti.nimi}">Resepti</h2></div>
+                <div class="col-xs-12 col-12"><a th:href="@{/reseptit}">Takaisin</a></div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-12">Raaka-aineet:</div>
-            </div>
-            
-            <div class="row">
-                <ul>
+                <div class="col-xs-12 col-md-6">
+                    Raaka-aineet:
+                    <ul>
                     <li th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" 
                         th:text="${reseptiRaakaAine.maara + ' '+
                         reseptiRaakaAine.yksikko + ' ' +
                         reseptiRaakaAine.raakaAine.nimi}"/>
                     
                 </ul>
+                </div>
+                <div class="col-xs-12 col-md-6"><img th:src="@{/img/ei_kuvaa.png}" height="100%" style="border-radius: 50%"/></div>
             </div>
+
             
             <div th:if="${username==resepti.tili.username}" class="row">
                  <div class="col-xs-12 col-12">
@@ -31,12 +33,25 @@
                     <input type="file" name="kuva" id="picture"/>
                     <input type="submit" value="Lisää kuva!"/>
                 </form>
-                     <a th:href="@{/resepti/{id}/editoi(id=${resepti.id})}">Muokkaa</a>
                  </div>
-             </div>    
-                
-                
-            
+               
+            <div>
+                <div class="col-xs-12 col-12">
+                    Toiminnot:
+                    
+                <div th:if="${username!=null}" class="col-xs-12 col-12">
+                        <a th:href="@{/resepti/{id}/ruokalistaan(id=${resepti.id})}">Lisää ruokalistaan</a>
+                        <div th:if="${username==resepti.tili.username}">
+                            <a th:href="@{/resepti/{id}/editoi(id=${resepti.id})}">Muokkaa </a>
+                            <a th:if="${resepti.julkinen==false}" th:href="@{/resepti/{id}/julkiseksi(id=${resepti.id})}">Aseta julkiseksi </a>
+                            <a th:unless="${resepti.julkinen==false}" th:href="@{/resepti/{id}/yksityiseksi(id=${resepti.id})}">Aseta yksityiseksi </a>
+                            <a th:href="@{/resepti/{id}/poista(id=${resepti.id})}">Poista resepti</a>
+                        </div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>      
             <div class="row top-buffer">
                 <div class="col-xs-12 col-12"><pre th:text="${resepti.ohje}"/></div>
                 
