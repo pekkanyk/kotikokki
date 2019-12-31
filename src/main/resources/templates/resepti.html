@@ -13,7 +13,7 @@
                 <div class="col-xs-12 col-12"><a th:href="@{/reseptit}">Takaisin</a></div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-6">
+                <div class="col-xs-12 col-md-4">
                     Raaka-aineet:
                     <ul>
                     <li th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" 
@@ -23,13 +23,16 @@
                     
                 </ul>
                 </div>
-                <div class="col-xs-12 col-md-6"><img th:src="@{/img/ei_kuvaa.png}" height="100%" style="border-radius: 50%"/></div>
+                <div class="col-xs-12 col-md-6">
+                    <img th:if="${resepti.kuva!=null}" th:src="@{/resepti/{id}/kuva(id=${resepti.id})}" width="100%" style="border-radius: 10%"/>
+                    <img th:unless="${resepti.kuva!=null}" th:src="@{/img/ei_kuvaa.png}" height="100%" style="border-radius: 50%"/>
+                </div>
             </div>
 
             
             <div th:if="${username==resepti.tili.username}" class="row">
                  <div class="col-xs-12 col-12">
-                    <form method="POST" th:action="@{/resepti/{id}/kuva(id=${resepti.id})}" enctype="multipart/form-data">
+                    <form th:if="${resepti.kuva==null}" method="POST" th:action="@{/resepti/{id}/kuva(id=${resepti.id})}" enctype="multipart/form-data">
                     <input type="file" name="kuva" id="picture"/>
                     <input type="submit" value="Lisää kuva!"/>
                 </form>
@@ -46,6 +49,7 @@
                             <a th:if="${resepti.julkinen==false}" th:href="@{/resepti/{id}/julkiseksi(id=${resepti.id})}">Aseta julkiseksi </a>
                             <a th:unless="${resepti.julkinen==false}" th:href="@{/resepti/{id}/yksityiseksi(id=${resepti.id})}">Aseta yksityiseksi </a>
                             <a th:href="@{/resepti/{id}/poista(id=${resepti.id})}">Poista resepti</a>
+                            <a th:href="@{/resepti/{id}/poistakuva(id=${resepti.id})}">Poista kuva</a>
                         </div>
                         
                         </div>

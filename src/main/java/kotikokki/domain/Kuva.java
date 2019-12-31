@@ -26,6 +26,8 @@ public class Kuva extends AbstractPersistable<Long> {
     //@Type(type = "org.hibernate.type.BinaryType")
     @Lob
     private byte[] kuva;
+    private String contentType;
+    private Long contentLength;
     @OneToOne(mappedBy="kuva")
     private Resepti resepti;
 }

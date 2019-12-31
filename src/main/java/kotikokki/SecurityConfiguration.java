@@ -40,6 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/rekisteroidy").permitAll()
                 .antMatchers("/reseptit").permitAll()
                 .antMatchers("/resepti/*").permitAll()
+                .antMatchers("/resepti/*/kuva").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/css/*").permitAll()
                 .antMatchers("/img/*").permitAll()

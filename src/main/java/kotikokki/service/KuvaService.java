@@ -9,9 +9,15 @@ import java.io.IOException;
 import kotikokki.domain.Kuva;
 import kotikokki.domain.Resepti;
 import kotikokki.repository.KuvaRepository;
+import kotikokki.repository.ReseptiRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -22,54 +28,40 @@ import org.springframework.web.multipart.MultipartFile;
 public class KuvaService {
     @Autowired
     private KuvaRepository kuvaRepo;
+    @Autowired
+    private ReseptiRepository reseptiRepo;
     
     public Kuva getKuvaObject(Long id){
         return kuvaRepo.getOne(id);
     }
     
-    public Kuva save(MultipartFile picture, Resepti resepti) throws IOException{
+    public void save(MultipartFile picture, Resepti resepti) throws IOException{
         Kuva k = new Kuva();
+        Resepti r = resepti;
+        k.setContentType(picture.getContentType());
         byte[] bytes = IOUtils.toByteArray(picture.getInputStream());
         k.setKuva(bytes);
-        k.setResepti(resepti);
-        return kuvaRepo.save(k);
+        k.setContentLength(picture.getSize());
+        r.setKuva(kuvaRepo.save(k));
+        reseptiRepo.save(r);
     }
     
-    /*
-    public ResponseEntity<byte[]> getPicture(Long id){
-        Picture p = pictureRepository.getOne(id);
+    
+    public ResponseEntity<byte[]> haeKuva(Long id){
+        Kuva k = kuvaRepo.getOne(id);
         
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(p.getContentType()));
-        headers.setContentLength(p.getContentLength());
-        
-        return new ResponseEntity<>(p.getPicture(),headers,HttpStatus.CREATED);
-    }
-    
-    public String save(MultipartFile picture, String text, Account account) throws IOException{
-        Picture p = new Picture();
-        p.setContentType(picture.getContentType());
-        p.setText(text);
-        p.setAccount(account);
-        byte[] bytes = IOUtils.toByteArray(picture.getInputStream());
-        p.setPicture(bytes);
-        p.setContentLength(picture.getSize());
-        pictureRepository.save(p);
-        return "redirect:/gallery";
-    }
-    
-    
-    public List<Picture> findByAccount(Account account){
-        return pictureRepository.findByAccount(account);
+        headers.setContentType(MediaType.parseMediaType(k.getContentType()));
+        headers.setContentLength(k.getContentLength());
+        return new ResponseEntity<>(k.getKuva(),headers,HttpStatus.CREATED);
     }
     
     @Transactional
-    public void deletePicture(Long id){
-        Picture p = pictureRepository.getOne(id);
-        comment_pictureRepository.deleteByPicture(p);
-        pictureRepository.deleteById(id);
+    public void poistaKuvaReseptilta(Long id){
+        Resepti r = reseptiRepo.getOne(id);
+        kuvaRepo.deleteById(r.getKuva().getId());
+        r.setKuva(null);
+        reseptiRepo.save(r);
     }
-    */
-    
-    
+
 }
