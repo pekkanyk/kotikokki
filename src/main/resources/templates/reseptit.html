@@ -7,21 +7,6 @@
     <body>
         <header th:replace="fragments/layout :: header"></header>
         <div class="container">
-                        
-            <div class="row">
-                <div class="col-xs-12 col-12">
-                    <form method="POST" th:action="@{/reseptit/etsi}">
-                        <input type="text" name="nimi" placeholder="Etsi reseptejä"/>
-                        <input type="submit" value="Etsi"/>
-                    </form>
-                </div>
-            </div>
-            <div class="row bottom-buffer" th:if="${kirjautunut=='true'}">
-                <div class="col-xs-12 col-12">
-                    <a th:href="@{/reseptit/lisaa}">Lisää uusi resepti.</a>
-                </div>
-            </div>
-            
             <div class="row">
                 <table class="table">
                 <thead>

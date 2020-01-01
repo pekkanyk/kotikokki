@@ -3,16 +3,22 @@
         <meta charset="UTF-8" />
         <title th:text="${title}">Layout</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
         <link rel="stylesheet" th:href="@{/css/style.css}"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
     <body>
         <header th:fragment="header">
+            <!--
             <nav class="container" th:if="${kirjautunut=='true'}">
                 <div class="row bottom-buffer-big">
                 <div class="col-xs-12 col-md-2"><a th:href="@{/}">Etusivu</a></div>
                 <div class="col-xs-12 col-md-2"><a th:href="@{/reseptit}">Reseptit</a></div>
-                <div class="col-xs-12 col-md-2"><a th:href="@{/ruokalista}">Ruokalista</a></div>
+                <div class="col-xs-12 col-md-2"><a >Ruokalista</a></div>
                 <div class="col-xs-12 col-md-2"><a th:href="@{/kauppalista}">Kauppalista</a></div>
                 <div class="col-xs-12 col-md-2"><a th:href="@{/logout}">Logout</a></div>
                 
@@ -22,11 +28,81 @@
             
             <nav class="container" th:unless="${kirjautunut=='true'}">
                 <div class="row bottom-buffer-big">
-                    <div class="col-xs-12 col-md-2"><a th:href="@{/}">Etusivu</a></div>
-                    <div class="col-xs-12 col-md-2"><a th:href="@{/reseptit}">Reseptit</a></div>
+                    <div class="col-xs-12 col-md-2"><a >Etusivu</a></div>
+                    <div class="col-xs-12 col-md-2"><a >Reseptit</a></div>
                     <div class="col-xs-12 col-md-2"><a th:href="@{/rekisteroidy}">Rekisteröidy</a></div>
                     <div class="col-xs-12 col-md-2"><a th:href="@{/login}">Kirjaudu</a></div>
                 </div>
             </nav>
+            -->
+         <nav class="navbar navbar-default navbar-expand-lg navbar-light">
+	<div class="navbar-header d-flex col">
+		<a class="navbar-brand" th:href="@{/}">Koti<b>Kokki</b></a>
+                
+		<button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle navbar-toggler ml-auto">
+			<span class="navbar-toggler-icon"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+	</div>
+	<!-- Collection of nav links, forms, and other content for toggling -->
+	<div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
+		<ul class="nav navbar-nav">
+                        <li th:if="${kirjautunut=='true'}" class="nav-item dropdown">
+				<a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#">Admin <b class="caret"></b></a>
+				<ul class="dropdown-menu">					
+					<li><a th:href="@{/tietokanta}" class="dropdown-item">Tietokannat</a></li>
+					<li><a th:href="@{/tietokanta}" class="dropdown-item">Yksiköt</a></li>
+				</ul>
+			</li>
+			<li class="nav-item"><a th:href="@{/}" class="nav-link">Etusivu</a></li>
+                        
+                        
+			<li class="nav-item dropdown">
+				<a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#">Reseptit <b class="caret"></b></a>
+				<ul class="dropdown-menu">					
+					<li><a th:href="@{/reseptit}" class="dropdown-item">Selaa reseptejä</a></li>
+					<li><a th:href="@{/reseptit/lisaa}" class="dropdown-item">Lisää uusi resepti</a></li>
+				</ul>
+			</li>
+			<li class="nav-item"><a th:href="@{/ruokalistat}" class="nav-link">Ruokalistat</a></li>
+			<li class="nav-item"><a th:href="@{/kauppalistat}" class="nav-link">Kauppalistat</a></li>
+		</ul>
+		<form class="navbar-form form-inline search-form">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Etsi reseptejä...(TODO)">
+				<span class="input-group-btn">
+					<button type="button" class="btn btn-default"><i class="fa fa-search"></i></button>
+				</span>
+			</div>
+		</form>
+                
+		<ul class="nav navbar-nav navbar-right ml-auto">
+			<li th:if="${kirjautunut!='true'}" class="nav-item dropdown">
+				<a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="fa fa-user-o"></i> Kirjaudu</a>
+				<ul class="dropdown-menu">
+                                    <li>
+                                            <form class="form-inline login-form" action="/login" method="POST">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                                                <input type="text" name="username" class="form-control" placeholder="Käyttäjätunnus" required>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                                                <input type="password" name="password"class="form-control" placeholder="Salasana" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">OK</button>
+                                            </form>                        
+                                    </li>
+				</ul>
+			</li>
+                        <li th:unless="${kirjautunut!='true'}" class="nav-item">
+                            <a th:href="@{/logout}" class="nav-link"><i class="fa fa-user-o"></i> Kirjaudu ulos</a>
+                        </li>
+		</ul>
+	</div>
+</nav>   
+            
         </header>
     </body>
