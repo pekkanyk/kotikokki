@@ -31,7 +31,7 @@ public class DbController {
     
     @GetMapping("/tietokanta")
     public String raakaAineet(Model model){
-        String otsikko = "Raaka-aineet";
+        String otsikko = "Tietokanta-admint";
         model.addAttribute("raakaAineet", raRepo.findAll());
         model.addAttribute("yksikot", yksRepo.findAll());
         model.addAttribute("otsikko", otsikko);

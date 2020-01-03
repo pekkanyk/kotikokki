@@ -120,5 +120,9 @@ public class ReseptiService {
         return reseptiRepo.findByTiliOrJulkinen(tili, true);
     }
     
+    public Long laskeReseptit(){
+        return reseptiRepo.count();
+    }
+    
     
 }
