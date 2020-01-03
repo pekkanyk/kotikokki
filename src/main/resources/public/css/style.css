@@ -18,14 +18,22 @@
     border:none;
 }
 
-	body{
-		font-family: 'Open Sans', sans-serif;
-	}
-	.form-control {
-		box-shadow: none;
-		border-radius: 4px;        
-        border-color: #dfe3e8;
-	}
+.resepti {
+    white-space: pre-wrap;
+    word-break: keep-all;
+    font-family: 'Open Sans', sans-serif; 
+    color: #000000; 
+    margin: 5px; 
+}
+
+body{
+    font-family: 'Open Sans', sans-serif;
+}
+.form-control {
+    box-shadow: none;
+    border-radius: 4px;        
+    border-color: #dfe3e8;
+}
 	.form-control:focus {
 		border-color: #29c68c;
 		box-shadow: 0 0 8px rgba(0,0,0,0.1);

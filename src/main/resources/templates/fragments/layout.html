@@ -3,38 +3,20 @@
         <meta charset="UTF-8" />
         <title th:text="${title}">Layout</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-        <link rel="stylesheet" th:href="@{/css/style.css}"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
     </head>
     <body>
         <header th:fragment="header">
-            <!--
-            <nav class="container" th:if="${kirjautunut=='true'}">
-                <div class="row bottom-buffer-big">
-                <div class="col-xs-12 col-md-2"><a th:href="@{/}">Etusivu</a></div>
-                <div class="col-xs-12 col-md-2"><a th:href="@{/reseptit}">Reseptit</a></div>
-                <div class="col-xs-12 col-md-2"><a >Ruokalista</a></div>
-                <div class="col-xs-12 col-md-2"><a th:href="@{/kauppalista}">Kauppalista</a></div>
-                <div class="col-xs-12 col-md-2"><a th:href="@{/logout}">Logout</a></div>
-                
-                <div class="col-xs-12 col-md-2"><a th:href="@{/tietokanta}" th:if="${1==1}">Admin tools</a></div>
-                </div>
-            </nav>
-            
-            <nav class="container" th:unless="${kirjautunut=='true'}">
-                <div class="row bottom-buffer-big">
-                    <div class="col-xs-12 col-md-2"><a >Etusivu</a></div>
-                    <div class="col-xs-12 col-md-2"><a >Reseptit</a></div>
-                    <div class="col-xs-12 col-md-2"><a th:href="@{/rekisteroidy}">Rekisteröidy</a></div>
-                    <div class="col-xs-12 col-md-2"><a th:href="@{/login}">Kirjaudu</a></div>
-                </div>
-            </nav>
-            -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
          <nav class="navbar navbar-default navbar-expand-lg navbar-light">
 	<div class="navbar-header d-flex col">
 		<a class="navbar-brand" th:href="@{/}">Koti<b>Kokki</b></a>
@@ -97,12 +79,25 @@
                                     </li>
 				</ul>
 			</li>
+                    <!--
                         <li th:unless="${kirjautunut!='true'}" class="nav-item">
                             <a th:href="@{/logout}" class="nav-link"><i class="fa fa-user-o"></i> Kirjaudu ulos</a>
+                    -->
+                            <li th:unless="${kirjautunut!='true'}" class="nav-item dropdown">
+				<a data-toggle="dropdown" class="nav-link dropdown-toggle" href="#"><i class="fa fa-user-o"></i> Tiliasetukset</a>
+				<ul class="dropdown-menu">					
+					<li><a th:href="@{/logout}" class="dropdown-item">Kirjaudu ulos</a></li>
+					<li><a th:href="@{/tili}" class="dropdown-item">Omat tiedot</a></li>
+				</ul>
+			</li>
                         </li>
 		</ul>
 	</div>
-</nav>   
+</nav>
+                        
+            </div>
+      </div>
+</div>   
             
         </header>
     </body>

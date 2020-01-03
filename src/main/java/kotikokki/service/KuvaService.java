@@ -5,7 +5,13 @@
  */
 package kotikokki.service;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 import kotikokki.domain.Kuva;
 import kotikokki.domain.Resepti;
 import kotikokki.repository.KuvaRepository;
@@ -40,8 +46,11 @@ public class KuvaService {
         Resepti r = resepti;
         k.setContentType(picture.getContentType());
         byte[] bytes = IOUtils.toByteArray(picture.getInputStream());
-        k.setKuva(bytes);
-        k.setContentLength(picture.getSize());
+        //k.setKuva(bytes);
+        byte[] resized = this.resize(bytes, 1024);
+        k.setKuva(resized);
+        //k.setContentLength(picture.getSize());
+        k.setContentLength(Long.valueOf(resized.length));
         r.setKuva(kuvaRepo.save(k));
         reseptiRepo.save(r);
     }
@@ -63,5 +72,19 @@ public class KuvaService {
         r.setKuva(null);
         reseptiRepo.save(r);
     }
-
+    
+    private byte[] resize(byte[] bytes, int new_width) throws IOException{
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        BufferedImage img = ImageIO.read(inputStream);
+        int new_height = (new_width * img.getHeight())/img.getWidth();
+        
+        Image resized = img.getScaledInstance(new_width, new_height, Image.SCALE_SMOOTH);
+        
+        BufferedImage imageBuffer = new BufferedImage(new_width, new_height, BufferedImage.TYPE_INT_BGR);
+        imageBuffer.getGraphics().drawImage(resized, 0, 0, new Color(0,0,0),null);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        ImageIO.write(imageBuffer, "jpg", buffer);
+        buffer.close();
+        return buffer.toByteArray();
+    } 
 }
