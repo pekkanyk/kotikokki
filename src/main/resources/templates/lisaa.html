@@ -16,28 +16,32 @@
             </div>
                 
             <div class="row">
-                <div class="col-xs-12 col-12">
-                    <input type="text" name="nimi" placeholder="Reseptin nimi"/>
+                <div class="col-xs-12 col-md-6">
+                    <input class="inputbox-pitka" type="text" name="nimi" placeholder="Reseptin nimi"/>
                 </div>
             </div>
             
             <div class="row">
-                <div class="col-xs-12 col-12">
+                <div class="col-xs-12 col-md-6">
                     <label for="valinnat">Merkkaa julkiseksi</label>
                     <input type="checkbox" name="valinnat" value="julkinen"/>
                 </div>
             </div>    
                 
             <div class="row">
-                <div class="col-xs-12 col-12">Raaka-aineet:</div>
+                <div class="col-xs-12 col-md-6">Raaka-aineet:</div>
             </div>
                 
             
                 
             <div class="row">
-                <div class="col-xs-12 col-12">
-                    <input type="text" id="raakaAine" placeholder="Raaka-aine"/>
-                    <input type="text" id="maara" placeholder="Määrä"/>
+                <div class="col-xs-12 col-md-3">
+                    <input class="inputbox-pitka" type="text" id="raakaAine" placeholder="Raaka-aine"/>
+                </div>
+                <div class="col-xs-12 col-md-1">
+                    <input class="inputbox-pitka" type="text" id="maara" placeholder="Määrä"/>
+                </div>
+                <div class="col-xs-12 col-md-2">
                     <select name="yksikko" id="yksikko">
                         <option value=""></option>
                         <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
@@ -50,22 +54,34 @@
                 
             </section>
                 
-                
-            <!--    
+                             
             <div class="row">
-                <div class="col-xs-12 col-12">
-                     <input type="file" name="kuva" id="picture"/>
-                 </div>
-            </div>    
-            -->
-                
-            <div class="row">
-                <div class="col-xs-12 col-12">
-                    <textarea form ="lisaa_resepti" name="ohje" cols="70" rows="15" wrap="soft" placeholder="Reseptin ohje"></textarea>
+                <div class="col-xs-12 col-md-6">
+                    <textarea class="inputbox-pitka" form ="lisaa_resepti" name="ohje" style="resize: none" rows="15" wrap="soft" placeholder="Reseptin ohje"></textarea>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <input class="inputbox-pitka" type="text" name="lahde" placeholder="Tekijän nimi tai reseptin lähde."></input>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-xs-8 col-md-3">
+                    <label for="keittoaika">Keittoaika minuutteina:</label>
+                </div>
+                <div class="col-xs-4 col-md-1">
+                    <input class="inputbox-pitka" type="number" name="keittoaika" value="30"></input>
+                </div>
                 
-            
+            </div>
+            <div class="row">
+                <div class="col-xs-8 col-md-3">
+                    <label for="annokset">Reseptin annokset:</label>
+                </div>
+                <div class="col-xs-4 col-md-1">
+                    <input class="inputbox-pitka" type="number" name="annokset" value="4"></input>
+                </div>
+            </div>
             
             <div class="row">
                 <div class="col-xs-12 col-12">

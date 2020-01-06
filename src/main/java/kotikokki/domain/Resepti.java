@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -28,7 +29,11 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 public class Resepti extends AbstractPersistable<Long> {
     private String nimi;
+    @Lob
     private String ohje;
+    private int keittoaika;
+    private int annokset;
+    private String lahde;
     private LocalDateTime lisatty;
     @OneToOne
     private Kuva kuva;
