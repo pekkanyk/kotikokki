@@ -5,10 +5,11 @@
  */
 package kotikokki.controller;
 
+import java.security.Principal;
 import kotikokki.domain.RaakaAine;
 import kotikokki.domain.Yksikko;
 import kotikokki.repository.RaakaAineRepository;
-import kotikokki.repository.YksikkoRepository;
+import kotikokki.service.YksikkoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -27,15 +27,24 @@ public class DbController {
     @Autowired
     private RaakaAineRepository raRepo;
     @Autowired
-    private YksikkoRepository yksRepo;
+    private YksikkoService yksikkoService;
     
     @GetMapping("/tietokanta")
-    public String raakaAineet(Model model){
-        String otsikko = "Tietokanta-admint";
+    public String raakaAineet(Model model, Principal principal){
+        String otsikko = "Tietokanta-admin";
+        model.addAttribute("kirjautunut", "true");
         model.addAttribute("raakaAineet", raRepo.findAll());
-        model.addAttribute("yksikot", yksRepo.findAll());
+        model.addAttribute("yksikot", yksikkoService.findAll());
         model.addAttribute("otsikko", otsikko);
         return "tietokanta";
+    }
+    
+    @GetMapping("/tietokanta/yksikot")
+    public String yksikot(Model model){
+        model.addAttribute("kirjautunut", "true");
+        model.addAttribute("otsikko", "Yksikot");
+        model.addAttribute("yksikot", yksikkoService.findAll());
+        return "yksikot";
     }
    
     @PostMapping("/tietokanta/raakaAine")
@@ -46,14 +55,14 @@ public class DbController {
     
     @PostMapping("/tietokanta/yksikko")
     public String lisaaYksikko(@ModelAttribute Yksikko yksikko){
-        yksRepo.save(yksikko);
-        return "redirect:/tietokanta";
+        yksikkoService.tallenna(yksikko);
+        return "redirect:/tietokanta/yksikot";
     }
     
     @GetMapping("/tietokanta/yksikko/{id}/delete")
     public String poistaYksikko(@PathVariable Long id){
-        yksRepo.deleteById(id);
-        return "redirect:/tietokanta";
+        yksikkoService.poista(id);
+        return "redirect:/tietokanta/yksikot";
     }
     
 }

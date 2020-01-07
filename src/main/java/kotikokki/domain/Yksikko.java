@@ -24,5 +24,7 @@ public class Yksikko extends AbstractPersistable<Long> {
     @Column(unique=true)
     private String nimi;
     private Double kerroin;
+    private String perusyksikko;
+    private String nimi_pitka;
     
 }

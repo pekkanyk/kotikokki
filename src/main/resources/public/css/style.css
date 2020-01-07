@@ -25,8 +25,17 @@
 .inputbox-pitka{
     width: 100%;
 }
+.kentat-1st {
+   padding-left: 15px !important;
+   padding-right: 0px !important;
+   margin: 0 !important;
+}
 
-
+.kentat-nth {
+   padding-left: 5px !important;
+   padding-right: 0px !important;
+   margin: 0 !important;
+}
 .resepti {
     white-space: pre-wrap;
     word-break: keep-all;

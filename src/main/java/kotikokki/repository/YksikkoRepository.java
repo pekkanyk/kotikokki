@@ -15,4 +15,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface YksikkoRepository extends JpaRepository<Yksikko, Long>{
     public List<Yksikko> findAllByOrderByNimiAsc();
+    public Yksikko findByNimi(String nimi);
 }
