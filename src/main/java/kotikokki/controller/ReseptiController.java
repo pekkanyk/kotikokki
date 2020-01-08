@@ -57,7 +57,7 @@ public class ReseptiController {
     private String uusiResepti(Model model, Principal principal){
         model.addAttribute("otsikko", "Uusi reseptit");
         model.addAttribute("kirjautunut", "true");
-        model.addAttribute("tili", tiliService.haeTiliKayttajanimella(principal.getName()));
+        //model.addAttribute("tili", tiliService.haeTiliKayttajanimella(principal.getName()));
         model.addAttribute("yksikot", yksikkoRepo.findAllByOrderByNimiAsc());
         return "lisaa";
     }
@@ -68,9 +68,13 @@ public class ReseptiController {
                                 @RequestParam("raakaAine") List<String> raakaAineet,
                                 @RequestParam("maara") List<Double> maarat,
                                 @RequestParam("yksikko") List<String> yksikot,
+                                @RequestParam int keittoaika,
+                                @RequestParam int annokset,
+                                @RequestParam String lahde,
                                 @RequestParam String ohje,
-                                @RequestParam Long tiliId){
-        reseptiService.lisaaUusi(nimi, valinnat, raakaAineet, maarat, yksikot, ohje, tiliId);
+                                Principal principal){
+        Long tiliId = tiliService.haeTiliKayttajanimella(principal.getName()).getId();
+        reseptiService.lisaaUusi(nimi, valinnat, raakaAineet, maarat, yksikot, ohje, tiliId, keittoaika, annokset, lahde);
         return "redirect:/reseptit";
     }
     
@@ -108,10 +112,13 @@ public class ReseptiController {
                                 @RequestParam("maara") List<Double> maarat,
                                 @RequestParam("yksikko") List<String> yksikot,
                                 @RequestParam String ohje,
+                                @RequestParam int keittoaika,
+                                @RequestParam int annokset,
+                                @RequestParam String lahde,
                                 Principal principal){
         Resepti r = reseptiService.haeResepti(id);
         if (r.getTili().getUsername().equals(principal.getName())){
-            reseptiService.editoiResepti(id, nimi, valinnat, raakaAineet, maarat, yksikot, ohje);
+            reseptiService.editoiResepti(id, nimi, valinnat, raakaAineet, maarat, yksikot, ohje, keittoaika, annokset, lahde);
             return "redirect:/resepti/"+id;
         }
         else return "redirect:/resepti/"+id;

@@ -33,13 +33,25 @@ public class ReseptiService {
     @Autowired
     private TiliService tiliService;
     
-    public void lisaaUusi(String nimi, List<String> valinnat, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje, Long tiliId){
+    public void lisaaUusi(String nimi, 
+                            List<String> valinnat, 
+                            List<String> raakaAineet, 
+                            List<Double> maarat, 
+                            List<String> yksikot, 
+                            String ohje, 
+                            Long tiliId,
+                            int keittoaika,
+                            int annokset,
+                            String lahde){
         Resepti resepti = new Resepti();
         resepti.setNimi(nimi);
         if (valinnat.contains("julkinen")) resepti.setJulkinen(true);
         resepti.setOhje(ohje);
         resepti.setLisatty(LocalDateTime.now());
         resepti.setTili(tiliService.haeTiliIdlla(tiliId));
+        resepti.setLahde(lahde);
+        resepti.setAnnokset(annokset);
+        resepti.setKeittoaika(keittoaika);
         Resepti r = reseptiRepo.save(resepti);
         
         for (int i=0; i<raakaAineet.size();i++){
@@ -53,7 +65,16 @@ public class ReseptiService {
         //return r;
     }
     
-    public void editoiResepti(Long id, String nimi, List<String> valinnat, List<String> raakaAineet, List<Double> maarat, List<String> yksikot, String ohje){
+    public void editoiResepti(Long id, 
+                            String nimi, 
+                            List<String> valinnat, 
+                            List<String> raakaAineet, 
+                            List<Double> maarat, 
+                            List<String> yksikot, 
+                            String ohje,
+                            int keittoaika,
+                            int annokset,
+                            String lahde){
         Resepti resepti = reseptiRepo.getOne(id);
         List<ReseptiRaakaAine> vanhat = reseptiRaakaAineRepo.findByResepti(resepti);
         List<ReseptiRaakaAine> uudet = new ArrayList<>();
@@ -64,6 +85,9 @@ public class ReseptiService {
         
         resepti.setNimi(nimi);
         resepti.setOhje(ohje);
+        resepti.setLahde(lahde);
+        resepti.setAnnokset(annokset);
+        resepti.setKeittoaika(keittoaika);
         reseptiRepo.save(resepti);
         for (int i=0; i<raakaAineet.size();i++){
             ReseptiRaakaAine rra = new ReseptiRaakaAine();

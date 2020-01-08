@@ -1,7 +1,7 @@
 function editNimi(){
     
     document.getElementById("nimi").removeAttribute("readonly");
-    document.getElementById("nimi").removeAttribute("class");
+    document.getElementById("nimi").setAttribute("class", "inputbox-pitka");
     document.getElementById("niminappi").setAttribute("onclick", "saveNimi()");
     document.getElementById("niminappi").setAttribute("value", "SAVE");
 }
@@ -9,7 +9,7 @@ function editNimi(){
 function saveNimi(){
     
     document.getElementById("nimi").setAttribute("readonly", "readonly");
-    document.getElementById("nimi").setAttribute("class", "noBorder");
+    document.getElementById("nimi").setAttribute("class", "noBorder inputbox-pitka");
     document.getElementById("niminappi").setAttribute("onclick", "editNimi()");
     document.getElementById("niminappi").setAttribute("value", "EDIT");
 }

@@ -16,12 +16,14 @@
             </div>
                 
             <div class="row">
-                <div class="col-xs-12 col-12">
-                <input type="text" name="nimi" th:value="${resepti.nimi}" id="nimi" class="noBorder" readonly="readonly"/>
-                <input type="button" value="EDIT" id="niminappi" onclick="editNimi()"/>
+                <div class="col-xs-10 col-md-5">
+                    <input type="text" name="nimi" th:value="${resepti.nimi}" id="nimi" class="noBorder inputbox-pitka" readonly="readonly"/>
+                </div>
+                <div class="col-xs-2 col-md-1">
+                    <input type="button" value="EDIT" id="niminappi" onclick="editNimi()"/>
+                </div>
                     
                 </div>
-            </div>
                 
             <div class="row">
                 <div class="col-xs-12 col-12">
@@ -38,9 +40,13 @@
             
                 
             <div class="row">
-                <div class="col-xs-12 col-12">
-                    <input type="text" id="raakaAine" placeholder="Raaka-aine"/>
-                    <input type="text" id="maara" placeholder="Määrä"/>
+                <div class="col-xs-12 col-md-3 kentat-1st">
+                    <input class="inputbox-pitka" type="text" id="raakaAine" placeholder="Raaka-aine"/>
+                </div>
+                <div class="col-xs-12 col-md-1 kentat-nth">
+                    <input class="inputbox-pitka" type="text" id="maara" placeholder="Määrä"/>
+                </div>
+                <div class="col-xs-12 col-md-2 kentat-nth">
                     <select name="yksikko" id="yksikko">
                         <option value=""></option>
                         <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
@@ -78,15 +84,36 @@
            
                 
             <div class="row">
-                <div class="col-xs-12 col-12">
-                    <textarea form ="lisaa_resepti" name="ohje" cols="70" rows="15" wrap="soft" th:text="${resepti.ohje}"></textarea>
+                <div class="col-xs-12 col-md-6">
+                    <textarea class="inputbox-pitka" form ="lisaa_resepti" name="ohje" style="resize: none" rows="15" wrap="soft" th:text="${resepti.ohje}"></textarea>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <input class="inputbox-pitka" type="text" name="lahde" placeholder="Tekijän nimi tai reseptin lähde." th:value="${resepti.lahde}"></input>
+                </div>
+            </div>    
+            <div class="row">
+                <div class="col-xs-8 col-md-3">
+                    <label for="keittoaika">Keittoaika minuutteina:</label>
+                </div>
+                <div class="col-xs-4 col-md-1">
+                    <input class="inputbox-pitka" type="number" name="keittoaika" th:value="${resepti.keittoaika}"></input>
+                </div>
                 
+            </div>
+            <div class="row">
+                <div class="col-xs-8 col-md-3">
+                    <label for="annokset">Reseptin annokset:</label>
+                </div>
+                <div class="col-xs-4 col-md-1">
+                    <input class="inputbox-pitka" type="number" name="annokset" th:value="${resepti.annokset}"></input>
+                </div>
+            </div>    
             
             
             <div class="row">
-                <div class="col-xs-12 col-12">
+                <div class="col-xs-12 col-md-12">
                     <input type="hidden" name="valinnat" value="resepti"/>
                     <input type="submit" value="Tallenna"/>
                 </div>
