@@ -36,6 +36,8 @@
 				<ul class="dropdown-menu">					
 					<li><a th:href="@{/tietokanta}" class="dropdown-item">Tietokannat</a></li>
 					<li><a th:href="@{/tietokanta/yksikot}" class="dropdown-item">Yksiköt</a></li>
+                                        <li><a th:href="@{/tietokanta/raakaAineet}" class="dropdown-item">Raaka-aineet</a></li>
+                                        <li><a th:href="@{/tietokanta/optiot}" class="dropdown-item">Alasvetovalikot</a></li>
 				</ul>
 			</li>
 			<li th:unless="${kirjautunut=='true'}" class="nav-item"><a th:href="@{/}" class="nav-link">Etusivu</a></li>
@@ -102,4 +104,7 @@
 </div>   
             
         </header>
+        <footer th:fragment="footer">
+            <div class="bottom-buffer-big">&nbsp;</div>
+        </footer>
     </body>

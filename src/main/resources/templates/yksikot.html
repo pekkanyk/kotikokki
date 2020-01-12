@@ -16,19 +16,19 @@
        
             <div class="row">
                     <form method="POST" th:action="@{/tietokanta/yksikko}">
-                        <div class="col-xs-12 col-md-1 kentat-1st">
+                        <div class="col-xs-2 col-md-1 kentat-1st">
                             <input class="inputbox-pitka" type="text" name="nimi" placeholder="Yksikkö"/>
                         </div>
-                        <div class="col-xs-12 col-md-1 kentat-nth">
+                        <div class="col-xs-2 col-md-1 kentat-nth">
                             <input class="inputbox-pitka" type="text" name="kerroin" placeholder="Kerroin"/>
                         </div>
-                        <div class="col-xs-12 col-md-1 kentat-nth">
+                        <div class="col-xs-2 col-md-1 kentat-nth">
                             <input class="inputbox-pitka" type="text" name="perusyksikko" placeholder="Perusyksikko"/>
                         </div>
-                        <div class="col-xs-12 col-md-2 kentat-nth">
+                        <div class="col-xs-4 col-md-2 kentat-nth">
                             <input class="inputbox-pitka" type="text" name="nimi_pitka" placeholder="Nimi pitkänä"/>
                         </div>
-                        <div class="col-xs-12 col-md-1 kentat-nth">
+                        <div class="col-xs-2 col-md-1 kentat-nth">
                             <input type="submit" value="Lisää"/>
                         </div>
                     </form>
@@ -42,18 +42,34 @@
                 <div class="col-xs-12 col-md-12"><b>Tietokannassa olevat yksiköt</b></div>
             </div>
             
-            <div th:each="yksikko : ${yksikot}" class="row">
-                <div class="col-md-12">
-                <form method="GET" th:action="@{/tietokanta/yksikko/{id}/delete(id=${yksikko.id})}">
-                    <label for="nappi" th:text="${yksikko.nimi}"/>
-                    <input type="submit" value="DEL" name="nappi"/>
-                </form>
+            <div class="row">
+                <div class="col-md-6">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Yksikkö</th>
+                        <th>Keroin</th>
+                        <th>Perusyksikkö</th>
+                        <th>Pitkä nimi</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tr th:each="yksikko : ${yksikot}">
+                    <td th:text="${yksikko.nimi}"></td>
+                    <td th:text="${yksikko.kerroin}"></td>
+                    <td th:text="${yksikko.perusyksikko}"></td>
+                    <td th:text="${yksikko.nimi_pitka}"></td>
+                    <td>
+                      <a th:href="@{/tietokanta/yksikot/{id}/poista(id=${yksikko.id})}" onclick="return confirm('Vahvista poistaminen.');"><img th:src="@{/img/ico_remove.gif}" title="poista"/></a>
+                    </td>
+                </tr>
+                </table>
+                </div>    
+                    
+                
                 </div>
-            </div>
+            </div>    
             
-            
-        </div>    
-            
-            
+        <footer th:replace="fragments/layout :: footer"></footer>      
     </body>
 </html>

@@ -36,13 +36,13 @@ function uusiRivi(){
         yksikko.name = "yksikko";
         yksikko.value = document.getElementById("yksikko").value;
          
-    var nappi = document.createElement("input");
-        nappi.type = "button";
-        nappi.value = "del";
+    var nappi = document.createElement("a");
         var onClick = "poistaRaakaAine('"+document.getElementById("raakaAine").value+"')";
         nappi.setAttribute("onclick", onClick);
         
-    
+    var kuva = document.createElement("img");
+        kuva.setAttribute("src", "/img/ico_remove.gif");
+        kuva.setAttribute("title", "poista");
     
     
     var row = document.createElement("tr");
@@ -55,6 +55,7 @@ function uusiRivi(){
         col3.appendChild(document.createTextNode(yksikko.value));
     var col4 = document.createElement("td");
     
+    nappi.appendChild(kuva);
     col4.appendChild(nappi);
     col4.appendChild(raakaAine);
     col4.appendChild(maara);

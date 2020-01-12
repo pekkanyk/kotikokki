@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title=${otsikko})" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+        <header th:replace="fragments/layout :: header"></header>
+        
+        
+        <div class="container">
+            
+            <div class="row">
+                <div class="col-xs-12 col-md-12"><b>Lisää uusi alasvetovalikon optio</b></div>
+            </div>
+       
+            <div class="row bottom-buffer">
+                    <form method="POST" th:action="@{/tietokanta/optiot/lisaa}">
+                        <div class="col-xs-6 col-md-2 kentat-1st">
+                            <input class="inputbox-pitka" type="text" name="nimi" placeholder="Valinta"/>
+                        </div>
+                        <div class="col-xs-4 col-md-3 kentat-nth">
+                            <select name="valikko">
+                                <option value=""></option>
+                                <option value="ra_osasto">Kauppa-osasto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-xs-2 col-md-1 kentat-nth">
+                            <input type="submit" value="Lisää"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        
+        <div class="container">
+            
+            <div class="row">
+                <div class="col-xs-12 col-md-12"><b>Tietokannassa olevat alasvetovalikoiden optiot</b></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th>Optio</th>
+                        <th>Valikko</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tr th:each="optio : ${optiot}">
+                    <td th:text="${optio.nimi}"></td>
+                    <td th:text="${optio.valikko}"></td>
+                    <td>
+                      <a th:href="@{/tietokanta/optiot/{id}/poista(id=${optio.id})}" onclick="return confirm('Vahvista poistaminen.');"><img th:src="@{/img/ico_remove.gif}" title="poista"/></a>
+                    </td>
+                </tr>
+                </table>
+                </div>    
+                    
+                
+                </div>
+            </div>
+           
+            
+        <footer th:replace="fragments/layout :: footer"></footer>      
+    </body>
+</html>

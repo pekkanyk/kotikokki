@@ -6,8 +6,10 @@
 package kotikokki.controller;
 
 import java.security.Principal;
+import kotikokki.domain.Optio;
 import kotikokki.domain.RaakaAine;
 import kotikokki.domain.Yksikko;
+import kotikokki.repository.OptioRepository;
 import kotikokki.repository.RaakaAineRepository;
 import kotikokki.service.YksikkoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class DbController {
     private RaakaAineRepository raRepo;
     @Autowired
     private YksikkoService yksikkoService;
+    @Autowired
+    private OptioRepository optioRepo;
     
     @GetMapping("/tietokanta")
     public String raakaAineet(Model model, Principal principal){
@@ -46,13 +50,7 @@ public class DbController {
         model.addAttribute("yksikot", yksikkoService.findAll());
         return "yksikot";
     }
-   
-    @PostMapping("/tietokanta/raakaAine")
-    public String lisaaRaakaAine(@ModelAttribute RaakaAine raakaAine){
-        raRepo.save(raakaAine);
-        return "redirect:/tietokanta";
-    }
-    
+  
     @PostMapping("/tietokanta/yksikko")
     public String lisaaYksikko(@ModelAttribute Yksikko yksikko){
         yksikkoService.tallenna(yksikko);
@@ -65,4 +63,38 @@ public class DbController {
         return "redirect:/tietokanta/yksikot";
     }
     
+    @PostMapping("/tietokanta/raakaAineet/lisaa")
+    public String lisaaRaakaAine(@ModelAttribute RaakaAine raakaAine){
+        raRepo.save(raakaAine);
+        return "redirect:/tietokanta/raakaAineet";
+    }
+    
+    @GetMapping("/tietokanta/raakaAineet")
+    public String raakaAineet(Model model){
+        model.addAttribute("kirjautunut", "true");
+        model.addAttribute("otsikko", "Raaka-aineet");
+        model.addAttribute("optiot", optioRepo.findByValikkoOrderByNimi("ra_osasto"));
+        model.addAttribute("raakaAineet", raRepo.findAll());
+        return "raakaAineet";
+    }
+    
+    @GetMapping("/tietokanta/optiot")
+    public String optiot(Model model){
+        model.addAttribute("kirjautunut", "true");
+        model.addAttribute("otsikko", "Optiot");
+        model.addAttribute("optiot", optioRepo.findAll());
+        return "optiot";
+    }
+    
+    @PostMapping("/tietokanta/optiot/lisaa")
+    public String lisaaOptio(@ModelAttribute Optio optioOlio){
+        optioRepo.save(optioOlio);
+        return "redirect:/tietokanta/optiot";
+    }
+    
+    @GetMapping("/tietokanta/optiot/{id}/delete")
+    public String poistaOptio(@PathVariable Long id){
+        optioRepo.deleteById(id);
+        return "redirect:/tietokanta/optiot";
+    }
 }

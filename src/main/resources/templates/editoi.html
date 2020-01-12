@@ -40,43 +40,46 @@
             
                 
             <div class="row">
-                <div class="col-xs-12 col-md-3 kentat-1st">
+                <div class="col-xs-6 col-md-3 kentat-1st">
                     <input class="inputbox-pitka" type="text" id="raakaAine" placeholder="Raaka-aine"/>
                 </div>
-                <div class="col-xs-12 col-md-1 kentat-nth">
+                <div class="col-xs-2 col-md-1 kentat-nth">
                     <input class="inputbox-pitka" type="text" id="maara" placeholder="Määrä"/>
                 </div>
-                <div class="col-xs-12 col-md-2 kentat-nth">
+                <div class="col-xs-4 col-md-2 kentat-nth">
                     <select name="yksikko" id="yksikko">
                         <option value=""></option>
                         <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
                     </select>
-                    <input type="button" onclick="uusiRivi()" value="OK"/>
+                    <a onclick="uusiRivi()"><img th:src="@{/img/ico_add.gif}" title="lisää"/></a>
                 </div>
             </div>
                 
             
             <div class='row'>
-                <div class="col-xs-12 col-12">
-                <table id='ainekset'>
-                    <tr>
+                <div class="col-xs-12 col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr>
                         <th>Raaka-aine</th>
                         <th>Määrä</th>
                         <th>Yksikkö</th>
                         <th></th>
-                    </tr>
+                        </tr>
+                    </thead>
+                    <tbody id="ainekset">
                     <tr th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" th:id="${reseptiRaakaAine.raakaAine.nimi}">
                         <td th:text="${reseptiRaakaAine.raakaAine.nimi}"></td>
                         <td th:text="${reseptiRaakaAine.maara}"></td>
                         <td th:text="${reseptiRaakaAine.yksikko}"></td>
                         <td>
-                            <input value="del" th:onclick="poistaRaakaAine([[${reseptiRaakaAine.raakaAine.nimi}]])" type="button"></input>
+                            <a th:onclick="poistaRaakaAine([[${reseptiRaakaAine.raakaAine.nimi}]])"><img th:src="@{/img/ico_remove.gif}" title="poista"/></a>
                             <input type="hidden" name="raakaAine" th:value="${reseptiRaakaAine.raakaAine.nimi}"/>
                             <input type="hidden" name="maara" th:value="${reseptiRaakaAine.maara}"/>
                             <input type="hidden" name="yksikko" th:value="${reseptiRaakaAine.yksikko}"/>
                         </td>
                     </tr>
-                    
+                    </tbody>    
                 </table>
                 </div>
             </div>    
@@ -122,5 +125,6 @@
         </div>
         <script th:inline="javascript"> var contextRoot = /*[[@{/}]]*/ '';</script>
         <script th:src="@{/javascript/reseptiEdit.js}" defer></script>
+        <footer th:replace="fragments/layout :: footer"></footer>  
     </body>
 </html>

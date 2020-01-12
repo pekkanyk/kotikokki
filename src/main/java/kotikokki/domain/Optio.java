@@ -5,10 +5,7 @@
  */
 package kotikokki.domain;
 
-import java.util.List;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,10 +19,8 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RaakaAine extends AbstractPersistable<Long> {
-    @Column(unique=true)
+public class Optio extends AbstractPersistable<Long> {
     private String nimi;
-    @OneToMany(mappedBy="raakaAine")
-    private List<ReseptiRaakaAine> reseptiRaakaAineet;
-    private String kauppa_osasto;
+    private String valikko;
+    
 }

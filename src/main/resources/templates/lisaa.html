@@ -35,27 +35,41 @@
             
                 
             <div class="row">
-                <div class="col-xs-12 col-md-3 kentat-1st">
+                <div class="col-xs-6 col-md-3 kentat-1st">
                     <input class="inputbox-pitka" type="text" id="raakaAine" placeholder="Raaka-aine"/>
                 </div>
-                <div class="col-xs-12 col-md-1 kentat-nth">
+                <div class="col-xs-2 col-md-1 kentat-nth">
                     <input class="inputbox-pitka" type="text" id="maara" placeholder="Määrä"/>
                 </div>
-                <div class="col-xs-12 col-md-2 kentat-nth">
+                <div class="col-xs-4 col-md-2 kentat-nth">
                     <select name="yksikko" id="yksikko">
                         <option value=""></option>
                         <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
                     </select>
-                    <input type="button" onclick="uusiRivi()" value="OK"/>
+                    <a onclick="uusiRivi()"><img th:src="@{/img/ico_add.gif}" title="lisää"/></a>
                 </div>
             </div>
                 
-            <section id="ainekset">
-                
-            </section>
+            <div class='row'>
+                <div class="col-xs-12 col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th>Raaka-aine</th>
+                        <th>Määrä</th>
+                        <th>Yksikkö</th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="ainekset">
+                    
+                    </tbody>    
+                </table>
+                </div>
+            </div>
                 
                              
-            <div class="row">
+            <div class="row top-buffer">
                 <div class="col-xs-12 col-md-6">
                     <textarea class="inputbox-pitka" form ="lisaa_resepti" name="ohje" style="resize: none" rows="15" wrap="soft" placeholder="Reseptin ohje"></textarea>
                 </div>
@@ -92,6 +106,8 @@
             </form>
         </div>
         <script th:inline="javascript"> var contextRoot = /*[[@{/}]]*/ '';</script>
-        <script th:src="@{/javascript/raakaAineOption.js}" defer></script>
+        
+        <script th:src="@{/javascript/reseptiEdit.js}" defer></script>
+        <footer th:replace="fragments/layout :: footer"></footer>  
     </body>
 </html>
