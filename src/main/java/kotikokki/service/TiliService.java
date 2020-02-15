@@ -55,5 +55,8 @@ public class TiliService {
         return tiliRepo.findByUsername(username);
     }
     
+    public Long laskeKayttajat(){
+        return tiliRepo.count();
+    }
     
 }

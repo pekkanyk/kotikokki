@@ -21,6 +21,7 @@ public class RaakaAineService {
     
     public RaakaAine lisaaJosEiOlemassa(String raakaAine){
         RaakaAine ra = new RaakaAine();
+        raakaAine = raakaAine.trim();
         
         if (raakaAineRepo.findByNimi(raakaAine)==null){
             ra.setNimi(raakaAine);

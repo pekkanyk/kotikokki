@@ -148,5 +148,12 @@ public class ReseptiService {
         return reseptiRepo.count();
     }
     
+    public Long laskeKuvalliset(){
+        return reseptiRepo.countByKuvaNotNull();
+    }
+    
+    public Long laskeJulkiset(){
+        return reseptiRepo.countByJulkinenIsTrue();
+    }
     
 }

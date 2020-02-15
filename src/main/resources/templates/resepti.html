@@ -17,7 +17,7 @@
                     Raaka-aineet:
                     <ul>
                     <li th:each="reseptiRaakaAine : ${resepti.reseptiRaakaAineet}" 
-                        th:text="${reseptiRaakaAine.maara + ' '+
+                        th:text="${#numbers.formatDecimal(reseptiRaakaAine.maara, 0, T(Math).round(reseptiRaakaAine.maara) == reseptiRaakaAine.maara ? 0 : 2) + ' '+
                         reseptiRaakaAine.yksikko + ' ' +
                         reseptiRaakaAine.raakaAine.nimi}"/>
                     

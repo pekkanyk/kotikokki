@@ -18,5 +18,7 @@ public interface ReseptiRepository extends JpaRepository<Resepti, Long>{
     List<Resepti> findByTili(Tili tili);
     List<Resepti> findByJulkinen(boolean julkinen);
     List<Resepti> findByTiliOrJulkinen(Tili tili, boolean julkinen);
+    Long countByKuvaNotNull();
+    Long countByJulkinenIsTrue();
     
 }

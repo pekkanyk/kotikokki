@@ -7,6 +7,7 @@ package kotikokki.controller;
 
 import java.security.Principal;
 import kotikokki.service.ReseptiService;
+import kotikokki.service.TiliService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,8 @@ public class DefaultController {
     
     @Autowired
     private ReseptiService reseptiService;
+    @Autowired
+    private TiliService tiliService;
     
     /*
     @GetMapping("*")
@@ -34,6 +37,9 @@ public class DefaultController {
         if (principal!=null) model.addAttribute("kirjautunut", "true");
         else model.addAttribute("kirjautunut", "false");
         model.addAttribute("reseptiLkm", reseptiService.laskeReseptit());
+        model.addAttribute("reseptitKuvalla", reseptiService.laskeKuvalliset());
+        model.addAttribute("julkisetLkm", reseptiService.laskeJulkiset());
+        model.addAttribute("kayttajaLkm", tiliService.laskeKayttajat());
         return "index";
     }
     

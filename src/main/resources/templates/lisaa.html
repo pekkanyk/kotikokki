@@ -42,11 +42,11 @@
                     <input class="inputbox-pitka" type="text" id="maara" placeholder="Määrä"/>
                 </div>
                 <div class="col-xs-4 col-md-2 kentat-nth">
-                    <select name="yksikko" id="yksikko">
+                    <select id="yksikko">
                         <option value=""></option>
                         <option th:each="yksikko : ${yksikot}" th:value="${yksikko.nimi}" th:text="${yksikko.nimi}">yksikkö</option>
                     </select>
-                    <a onclick="uusiRivi()"><img th:src="@{/img/ico_add.gif}" title="lisää"/></a>
+                    <a href="#" onclick="uusiRivi()" onkeypress="if(event.keyCode==32||event.keyCode==13){uusiRivi()};"><img th:src="@{/img/ico_add.gif}" title="lisää"/></a>
                 </div>
             </div>
                 
