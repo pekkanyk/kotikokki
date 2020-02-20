@@ -14,5 +14,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface TiliRepository extends JpaRepository<Tili, Long>{
     Tili findByUsername(String username);
-    Long countByUsername();
 }
