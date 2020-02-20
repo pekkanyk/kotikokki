@@ -26,24 +26,19 @@ public class TiliService {
     private PasswordEncoder passwordEncoder;
     
     public String luoTili(String username, String password, String password2, String kokoNimi){
-        String error = "";
         if (!password.equals(password2)){
-            error = "salasanat eivät olleet samat. Ytitä uudelleen.";
-            return error;
+            return "salasanat eivät olleet samat. Ytitä uudelleen.";
         }
         if (this.tiliRepo.findByUsername(username)==null){
-            
             Tili t = new Tili();
             t.setUsername(username);
             t.setPassword(passwordEncoder.encode(password));
             t.setKokoNimi(kokoNimi);
             tiliRepo.save(t);
-            error = "Tili luotu. Kirjaudu sisään jatkaaksesi.";
-            return error;
+            return "Tili luotu. Kirjaudu sisään jatkaaksesi.";
         }
         else {
-            error = "Käyttäjätunnus on jo olemassa. Valitse toinen käyttäjätunnus.";
-            return error;
+            return "Käyttäjätunnus on jo olemassa. Valitse toinen käyttäjätunnus.";
         }
     }
     

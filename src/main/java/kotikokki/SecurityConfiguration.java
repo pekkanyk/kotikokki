@@ -36,22 +36,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().sameOrigin();
         
         http.authorizeRequests()
-                //.antMatchers("/h2-console", "/h2-console/**").permitAll()
-                //.antMatchers("/tietokanta-konsoli", "/tietokanta-konsoli/**").permitAll()
-                .antMatchers("/rekisteroidy").permitAll()
-                .antMatchers("/reseptit").permitAll()
-                .antMatchers("/resepti/*").permitAll()
-                .antMatchers("/resepti/*/kuva").permitAll()
-                .antMatchers("/").permitAll()
-                .antMatchers("/css/*").permitAll()
-                .antMatchers("/img/*").permitAll()
-                .anyRequest().authenticated();
-                http.formLogin()
-                .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/");
+            //.antMatchers("/h2-console", "/h2-console/**").permitAll()
+            //.antMatchers("/tietokanta-konsoli", "/tietokanta-konsoli/**").permitAll()
+            .antMatchers("/rekisteroidy").permitAll()
+            .antMatchers("/reseptit").permitAll()
+            .antMatchers("/resepti/*").permitAll()
+            .antMatchers("/resepti/*/kuva").permitAll()
+            .antMatchers("/").permitAll()
+            .antMatchers("/css/*").permitAll()
+            .antMatchers("/img/*").permitAll()
+            .anyRequest().authenticated();
+            http.formLogin()
+            .permitAll()
+            .and()
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/");
     }
 
     @Autowired

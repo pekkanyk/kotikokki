@@ -11,8 +11,8 @@ import kotikokki.repository.*;
 @SpringBootApplication
 public class KotikokkiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(KotikokkiApplication.class, args);
-	}
+    public static void main(String[] args) {
+	SpringApplication.run(KotikokkiApplication.class, args);
+    }
 
 }
