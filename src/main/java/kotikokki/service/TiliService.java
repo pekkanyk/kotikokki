@@ -5,9 +5,6 @@
  */
 package kotikokki.service;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 import kotikokki.domain.Tili;
 import kotikokki.repository.TiliRepository;
 import org.springframework.beans.factory.annotation.Autowired;

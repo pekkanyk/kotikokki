@@ -6,12 +6,9 @@
 package kotikokki;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import kotikokki.domain.Tili;
 import kotikokki.repository.TiliRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,8 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private TiliRepository tiliRepo;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Tili account = tiliRepo.findByUsername(username);
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        final Tili account = tiliRepo.findByUsername(username);
         if (account == null) {
             throw new UsernameNotFoundException("No such user: " + username);
         }

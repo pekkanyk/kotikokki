@@ -8,7 +8,6 @@ package kotikokki.controller;
 import java.io.IOException;
 import java.security.Principal;
 import kotikokki.domain.Resepti;
-import kotikokki.domain.Kuva;
 import kotikokki.repository.ReseptiRepository;
 import kotikokki.service.KuvaService;
 import org.springframework.beans.factory.annotation.Autowired;

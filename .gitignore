@@ -23,4 +23,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
 database.trace.db
+/bin/
+/.gradle/
+

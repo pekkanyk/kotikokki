@@ -8,6 +8,7 @@ package kotikokki.domain;
 import javax.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode (callSuper = false)
 public class Optio extends AbstractPersistable<Long> {
     private String nimi;
     private String valikko;

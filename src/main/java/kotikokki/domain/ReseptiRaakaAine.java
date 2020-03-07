@@ -36,4 +36,8 @@ public class ReseptiRaakaAine extends AbstractPersistable<Long> {
         return ((this.resepti.equals(other.resepti) && this.maara.equals(other.maara)) && 
                     (this.raakaAine.equals(other.raakaAine) && this.yksikko.equals(other.yksikko)));
     }
+    @Override
+    public int hashCode() {
+        return raakaAine.hashCode()+resepti.hashCode()+maara.hashCode()+yksikko.hashCode();
+    }
 }
