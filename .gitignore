@@ -27,5 +27,5 @@ build/
 
 database.trace.db
 /bin/
-/.gradle/
+.gradle/
 
