@@ -28,4 +28,9 @@ build/
 database.trace.db
 /bin/
 .gradle/
-
+gradlew.bat
+gradlew
+.project
+.classpath
+gradle/
+.settings/
