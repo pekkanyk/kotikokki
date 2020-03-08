@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: kotikokki-database
+    ports:
+     - "5432:5432"
+    environment:
+     - POSTGRES_USER=kotikokki
+     - POSTGRES_PASSWORD=kotikokki
+     - POSTGRES_DB=kotikokki
+  backend:
+    image: kotikokki
+    ports:
+     - "8080:8080"
+    depends_on:
+     - db
+    container_name: kotikokki

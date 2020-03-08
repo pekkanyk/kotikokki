@@ -47,4 +47,6 @@ tasks.withType(JavaCompile) {
 
 bootJar {
     mainClassName = 'kotikokki.KotikokkiApplication'
+    baseName = 'kotikokki'
+    version = '0.1.0'
 }
