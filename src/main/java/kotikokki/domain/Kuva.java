@@ -24,7 +24,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 @EqualsAndHashCode (callSuper = false)
 public class Kuva extends AbstractPersistable<Long> {
-    @Lob
+//    @Lob
     private byte[] kuva;
     private String contentType;
     private Long contentLength;

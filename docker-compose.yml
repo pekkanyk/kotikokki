@@ -17,10 +17,10 @@ services:
     depends_on:
      - db
     container_name: kotikokki
-  metabase:
-    image: metabase/metabase
+  adminer:
+    image: adminer:latest
     ports:
-     - "3000:3000"
+     - "8181:8080"
     depends_on:
      - db
      - backend

@@ -31,7 +31,8 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @EqualsAndHashCode (callSuper = false)
 public class Resepti extends AbstractPersistable<Long> {
     private String nimi;
-    @Lob
+//    @Lob
+    @Column(length=1048576)
     private String ohje;
     private int keittoaika;
     private int annokset;
