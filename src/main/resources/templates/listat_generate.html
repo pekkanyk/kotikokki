@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title='Keräys')" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+            <div class="container">
+            <form method="POST" th:action="@{/listat}" enctype="multipart/form-data" id="listat_form">
+                
+                <table>
+                    <tr th:each="rivi : ${nro1}"> <td><div th:text="${rivi}"/></td> </tr><tr><td>&nbsp;</td></tr>
+                    
+                </table>
+                
+            </form>
+        </div>
+    </body>
+</html>
