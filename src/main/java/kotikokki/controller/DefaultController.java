@@ -6,14 +6,9 @@
 package kotikokki.controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
 import kotikokki.service.ListaService;
 import kotikokki.service.ReseptiService;
 import kotikokki.service.TiliService;

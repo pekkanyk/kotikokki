@@ -72,10 +72,6 @@ public class VkTuoteService {
             outlet.setOutId(product.getCustomerReturnsInfo().getId());
             outlet.setPoistotuote(product.isActive());
             outlet.setCondition(product.getCustomerReturnsInfo().getCondition());
-            //outlet.setDeleted(null);
-            //outlet.setIsEol(false);
-            //if(product.getAvailability().isIsEOL()) outlet.setIsEol(true);
-            //outlet.setJsSaldo(product.getAvailability().getStocks().getWeb().getWarehouses().getJs().getStock());
             Double alennusprosentti = 0.0;
             if (outlet.getNorPrice()!=0.0){
                 alennusprosentti = 100.0*(1-(product.getCustomerReturnsInfo().getPrice_with_tax()/outlet.getNorPrice()));
