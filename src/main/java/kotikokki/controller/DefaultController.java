@@ -84,7 +84,7 @@ public class DefaultController {
         model.addAttribute("totalRows",vkTuoteService.rivienLkm("deleted"));
         
         if (nappi.equals("Poistunut")){
-            if(date!=null){
+            if(!date.isEmpty()){
                 LocalDate date_parsed = LocalDate.parse(date);
                 model.addAttribute("riveja",vkTuoteService.historiaHakuTarkkaPaiva(date_parsed).size());
                 model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiaHakuTarkkaPaiva(date_parsed));
@@ -109,9 +109,8 @@ public class DefaultController {
             model.addAttribute("riveja",riveja);
         }
         else {
-            int riveja = vkTuoteService.historiaLista("").size();
-            model.addAttribute("riveja",riveja);
-            model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiaLista("pid"));
+            model.addAttribute("riveja",vkTuoteService.historiaHakuTarkkaPaiva(LocalDate.now()).size());
+            model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiaHakuTarkkaPaiva(LocalDate.now()));
         }
         
         return "outletHistoria";
@@ -182,7 +181,7 @@ public class DefaultController {
             model.addAttribute("riveja",riveja);
         }
         else if (nappi.equals("Muuttunut")){
-            if (date!=null){
+            if (!date.isEmpty()){
                 value = String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(date), LocalDate.now())); 
             }
             
