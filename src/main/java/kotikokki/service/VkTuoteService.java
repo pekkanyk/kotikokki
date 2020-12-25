@@ -178,7 +178,10 @@ public class VkTuoteService {
     }
     
     public List<OutletTuote> alePros(Double arvo, String suunta){
-        if (suunta.equals("asc")) return outletTuoteRepository.activeSearcAlennusAsc(arvo);
+        if (suunta.equals("asc")) {
+            if (arvo==-999) return outletTuoteRepository.activeSearcAlennusAscNoApple(5, "Apple");
+            else return outletTuoteRepository.activeSearcAlennusAsc(arvo);
+        }
         else return outletTuoteRepository.activeSearcAlennusDes(arvo);
     }
     

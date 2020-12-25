@@ -9,9 +9,11 @@
                 <form method="GET" th:action="@{/vkoutlet}" enctype="multipart/form-data" id="outlet">
                     <div class="row">
                         <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo"/></div>
-                        <div class="col-md-3"><input type="date" name="date"></div>
-                        <div class="col-md-3"><a href="/vkoutlet/historia">poistuneet</a></div>
-                        <div class="col-md-3"><a href="/vkoutlet/reload">reload</a></div>
+                        <div class="col-md-2"><input type="date" name="date"></div>
+                        <div class="col-md-1"><a href="/vkoutlet/reload">reload</a></div>
+                        <div class="col-md-2"><a href="/vkoutlet/historia">poistuneet</a></div>
+                        <div class="col-md-2"><a href="/vkoutlet?value=-999&date=&nappi=Ale"><5% NoApple</a></div>
+                        <div class="col-md-2"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-4" th:text="${riveja + ' / ' + totalRows}">0</div>

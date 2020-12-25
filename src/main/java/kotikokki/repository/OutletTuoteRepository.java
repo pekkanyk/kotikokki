@@ -30,8 +30,9 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     List<OutletTuote> activeSearchName(String haku);
     List<OutletTuote> findByNameLikeIgnoreCaseAndDeletedIsNullOrderByNameAsc(String haku);
     
-    //oletushaku, <5% outID:n mukaan
-    //oletushaku2 <5% outID:n mukaan, ei Applea
+    //hidden feat nro2. (ale -999) <x% outID:n mukaan, ei Applea
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.alennus <= ?1 AND o.name NOT LIKE %?2% ORDER BY o.alennus ASC")
+    List<OutletTuote> activeSearcAlennusAscNoApple(double ale, String haku);
     
     //aktiiviset alennuksen mukaan asc
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.alennus <= ?1 ORDER BY o.alennus ASC")
