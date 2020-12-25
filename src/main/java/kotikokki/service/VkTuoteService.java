@@ -22,7 +22,6 @@ import kotikokki.domain.OutletHistoria;
 import kotikokki.domain.OutletTuote;
 import kotikokki.domain.vk.Product;
 import kotikokki.domain.vk.Tuotteet;
-import kotikokki.repository.OutletHistoriaRepository;
 import kotikokki.repository.OutletTuoteRepository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VkTuoteService {
     @Autowired
     private OutletTuoteRepository outletTuoteRepository;
-    @Autowired
-    private OutletHistoriaRepository outletHistoriaRepository;
+
     
     private String osoite ="https://web-api.service.verkkokauppa.com/search?context=customer_returns_page&pageNo=";
     
@@ -74,6 +72,7 @@ public class VkTuoteService {
             outlet.setOutId(product.getCustomerReturnsInfo().getId());
             outlet.setPoistotuote(product.isActive());
             outlet.setCondition(product.getCustomerReturnsInfo().getCondition());
+            //outlet.setDeleted(null);
             //outlet.setIsEol(false);
             //if(product.getAvailability().isIsEOL()) outlet.setIsEol(true);
             //outlet.setJsSaldo(product.getAvailability().getStocks().getWeb().getWarehouses().getJs().getStock());
@@ -102,8 +101,6 @@ public class VkTuoteService {
     @Transactional
     public void reloadDb() throws IOException{
         List<OutletTuote> kaikkiOutletit = this.haeKaikki();
-        //outletTuoteRepository.deleteAll();
-        
         
         for (OutletTuote outlet: kaikkiOutletit){
             OutletTuote outletFromDb = outletTuoteRepository.findByOutId(outlet.getOutId());
@@ -114,57 +111,64 @@ public class VkTuoteService {
                 if (outletFromDb.getOutPrice()!=outlet.getOutPrice()){
                     outletFromDb = outlet;
                 }
+                if (outletFromDb.getDeleted()!=null) outletFromDb.setDeleted(null);
                 outlet.setPriceUpdatedDate(outletFromDb.getPriceUpdatedDate());
                 outletFromDb = outlet;
             }
             
             outletTuoteRepository.save(outletFromDb);
-            if (outletHistoriaRepository.findByOutId(outletFromDb.getOutId())!= null){
-                outletHistoriaRepository.deleteByOutId(outletFromDb.getOutId());
-            }
+         
         }
+        
         for (OutletTuote ostettu:outletTuoteRepository.findByUpdated(false)){
-            OutletHistoria historia = new OutletHistoria();
-            historia.setName(ostettu.getName());
-            historia.setOutId(ostettu.getOutId());
-            historia.setPid(ostettu.getPid());
-            historia.setOutPrice(ostettu.getOutPrice());
-            historia.setDeleteDay(LocalDate.now());
-            outletHistoriaRepository.save(historia);
+         
+            if (ostettu.getDeleted()==null) {
+                ostettu.setDeleted(LocalDate.now());
+            }
+            
+            outletTuoteRepository.save(ostettu);
         }
-        outletTuoteRepository.deleteByUpdated(false);
-        for (OutletTuote out:outletTuoteRepository.findAll()){
+        
+        for (OutletTuote out:outletTuoteRepository.findByDeletedNotNull()){
                 out.setUpdated(false);
                 outletTuoteRepository.save(out);
             }
-
+        for (OutletTuote paivitetty:outletTuoteRepository.findByUpdated(true)){
+         
+            paivitetty.setUpdated(false);
+            
+            outletTuoteRepository.save(paivitetty);
+        }
     }
-    public List<OutletHistoria> historiaLista(String sort){
+    public List<OutletTuote> historiaLista(String sort){
         List<OutletHistoria> outletHistoria = new ArrayList();
         if (sort.equals("pid")) {
-            outletHistoria = outletHistoriaRepository.findAllByOrderByPid();
+            return outletTuoteRepository.deletedListAllByPpid();
         }
         else if (sort.equals("date")){
-            outletHistoria = outletHistoriaRepository.findAllByOrderByDeleteDay();
+            return outletTuoteRepository.deletedListAllByDelDate();
         }
         else {
-            outletHistoria = outletHistoriaRepository.findAllByOrderByName();
+            return outletTuoteRepository.deletedListAllByOutId();
         }
-        return outletHistoria;
     }
     
-    public List<OutletHistoria> historiahaku(String kohde, String haku){
-        List<OutletHistoria> outletHistoria = new ArrayList();
+    public long rivienLkm(String haku){
+        if (haku.equals("active")) return outletTuoteRepository.countByDeletedIsNull();
+        else return outletTuoteRepository.countByDeletedIsNotNull();
+    }
+    
+    public List<OutletTuote> historiaHakuTarkkaPaiva(LocalDate date){
+        return outletTuoteRepository.deletedListByDate(date);
+    }
+    
+    public List<OutletTuote> historiahaku(String kohde, String haku){
         if (kohde.equals("date")) {
-            outletHistoria = outletHistoriaRepository.findByDeleteDayOrderByPid(LocalDate.parse(haku));
+            LocalDate date = LocalDate.now().minusDays(Long.valueOf(haku));
+            return outletTuoteRepository.deletedListByDate(date);
         }
-        else if (kohde.equals("tuote")){
-            outletHistoria = outletHistoriaRepository.findByNameLikeIgnoreCaseOrderByNameAsc(haku);
-        }
-        else {
-            outletHistoria = outletHistoriaRepository.findAllByOrderByName();
-        }
-        return outletHistoria;
+        else if (kohde.equals("tuote")) return outletTuoteRepository.findByNameLikeIgnoreCaseAndDeletedIsNotNullOrderByNameAsc(haku);
+        else return outletTuoteRepository.findByNameLikeIgnoreCaseAndDeletedIsNotNullOrderByNameAsc(haku);
     }
     
     public List<OutletTuote> listaaKaikkiAlleAlePaitsi(double ale, String haku){
@@ -173,44 +177,39 @@ public class VkTuoteService {
     }
     
     public List<OutletTuote> listDbByOutId(String suunta){
-        if (suunta.equals("des")) {
-            List<OutletTuote> outletit = outletTuoteRepository.findAllByOrderByOutIdAsc();
-            Collections.reverse(outletit);
-            return outletit;
-        }
-        else return outletTuoteRepository.findAllByOrderByOutIdAsc();
+        if (suunta.equals("asc")) return outletTuoteRepository.activeSearchAllSortOutIdDes();
+        else return outletTuoteRepository.acticeSearchAllSortOutIdAsc();
     }
+    
     public List<OutletTuote> alePros(Double arvo, String suunta){
-        if (suunta.equals("des")){
-            List<OutletTuote> outletit = outletTuoteRepository.findByAlennusLessThanOrderByAlennusAsc(arvo);
-            Collections.reverse(outletit);
-            return outletit;
-        }
-        else return outletTuoteRepository.findByAlennusLessThanOrderByAlennusAsc(arvo);
+        if (suunta.equals("asc")) return outletTuoteRepository.activeSearcAlennusAsc(arvo);
+        else return outletTuoteRepository.activeSearcAlennusDes(arvo);
     }
+    
     public List<OutletTuote> listByNimi(String haku){
-        return outletTuoteRepository.findByNameLikeIgnoreCaseOrderByNameAsc(haku);
+        //return outletTuoteRepository.findByNameLikeIgnoreCaseOrderByNameAsc(haku);
+        //return outletTuoteRepository.activeSearchName(haku);
+        return outletTuoteRepository.findByNameLikeIgnoreCaseAndDeletedIsNullOrderByNameAsc(haku);
     }
     
     public List<OutletTuote> listByHinta(double hinta, String suunta){
-        if (suunta.equals("asc")){
-            List<OutletTuote> outletit = outletTuoteRepository.findByOutPriceLessThanOrderByOutPriceDesc(hinta);
-            Collections.reverse(outletit);
-            return outletit;
-        }
-        else return outletTuoteRepository.findByOutPriceLessThanOrderByOutPriceDesc(hinta);
-    }
-    public List<OutletTuote> listByPoisto(boolean poisto){
-        return outletTuoteRepository.findByPoistotuoteOrderByName(poisto);
-    }
-    public List<OutletTuote> listByDumppi(boolean dumppi){
-        return outletTuoteRepository.findByDumppituoteOrderByName(dumppi);
-    }
-    public List<OutletTuote> listByMuuttunut(LocalDate pvSitten){
-        return outletTuoteRepository.findByPriceUpdatedDateBeforeOrderByNameAsc(pvSitten);
+        if (suunta.equals("des"))return outletTuoteRepository.activeSearchAllSortOutHintaDes(hinta);
+        else return outletTuoteRepository.activeSearchAllSortOutHintaAsc(hinta);
     }
     
+    public List<OutletTuote> listByPoisto(boolean poisto){
+        return outletTuoteRepository.activeListAllVkActive(poisto);
+    }
+    public List<OutletTuote> listByDumppi(boolean dumppi){
+        return outletTuoteRepository.activeListAllDumppi(dumppi);
+    }
+    public List<OutletTuote> listByMuuttunut(String pvSitten){
+        LocalDate date = LocalDate.now().minusDays(Long.valueOf(pvSitten));
+        return outletTuoteRepository.activeListAllSortChangeDateDesc(date);
+    }
+    /*
     public void delDb(){
         outletTuoteRepository.deleteAll();
     }
+    */
 }

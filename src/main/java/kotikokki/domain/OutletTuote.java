@@ -39,10 +39,19 @@ public class OutletTuote{
     private double alennus;
     private int warranty;
     private String condition;
+    private LocalDate deleted;
     //@Column(columnDefinition = "integer default 0")
     //private int jsSaldo;
     //@Column(columnDefinition = "boolean default false")
     //private boolean isEol;
+
+    public LocalDate getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(LocalDate deleted) {
+        this.deleted = deleted;
+    }
 
     
     public int getWarranty() {

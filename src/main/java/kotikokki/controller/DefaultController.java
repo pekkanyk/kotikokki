@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -76,16 +77,31 @@ public class DefaultController {
         vkTuoteService.reloadDb();
         return "redirect:/vkoutlet";
     }
+    
     @GetMapping("/vkoutlet/historia")
-    public String listaus(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi){
+    public String listaus(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
         if (nappi==null) nappi="main";
+        model.addAttribute("totalRows",vkTuoteService.rivienLkm("deleted"));
+        
         if (nappi.equals("Poistunut")){
-            if (!isNumeric(value)) value = "0";
-            LocalDate hakupv = LocalDate.now().minusDays(Long.parseLong(value));
-            int riveja = vkTuoteService.historiahaku("date", hakupv.toString()).size();
-            model.addAttribute("riveja",riveja);
-            model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiahaku("date", hakupv.toString()));
+            if(date!=null){
+                LocalDate date_parsed = LocalDate.parse(date);
+                model.addAttribute("riveja",vkTuoteService.historiaHakuTarkkaPaiva(date_parsed).size());
+                model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiaHakuTarkkaPaiva(date_parsed));
             }
+            
+            else {
+                if (!isNumeric(value)){
+                    int riveja = vkTuoteService.historiaLista("date").size();
+                    model.addAttribute("riveja",riveja);
+                    model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiaLista("date"));
+                }
+                else {
+                    model.addAttribute("riveja",vkTuoteService.historiahaku("date", value).size());
+                    model.addAttribute("outletHistoriaTuotteet",vkTuoteService.historiahaku("date", value));
+                }
+                }
+        }
         else if (nappi.equals("Tuote")){
             value = "%"+value+"%";
             model.addAttribute("outletHistoriaTuotteet", vkTuoteService.historiahaku("tuote", value));
@@ -101,40 +117,40 @@ public class DefaultController {
         return "outletHistoria";
     }
     @GetMapping("/vkoutlet")
-    public String outletSort(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String extra){
-        //if (value == null) value="";
-        if (nappi == null) nappi="Ale";
+    public String outletSort(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
+        model.addAttribute("totalRows",vkTuoteService.rivienLkm("active"));
+        if (nappi == null) {
+            nappi="Ale";
+            value="10";
+        }
         
-        if (extra!=null){
-                if (!isNumeric(value)||value ==null) value="100";
-                model.addAttribute("outletTuotteet", vkTuoteService.listaaKaikkiAlleAlePaitsi(Double.valueOf(value)+0.01,extra));
-                int riveja = vkTuoteService.listaaKaikkiAlleAlePaitsi(Double.valueOf(value)+0.01,extra).size();
-                model.addAttribute("riveja",riveja);
-            }
-        
-        else if (nappi.equals("Ale")){
-            if (!isNumeric(value)||value ==null) value="100";
-            model.addAttribute("outletTuotteet", vkTuoteService.alePros(Double.valueOf(value)+0.01,""));
-            int riveja = vkTuoteService.alePros(Double.valueOf(value),"").size();
+        if (nappi.equals("Ale")){
+            if (!isNumeric(value)) value="100";
+            model.addAttribute("outletTuotteet", vkTuoteService.alePros(Double.valueOf(value),"asc"));
+            int riveja = vkTuoteService.alePros(Double.valueOf(value),"asc").size();
             model.addAttribute("riveja",riveja);
+            
         }
         
         else if (nappi.equals("Aled")){
             if (!isNumeric(value)) value="100";
-            model.addAttribute("outletTuotteet", vkTuoteService.alePros(Double.valueOf(value)+0.01,"des"));
-            int riveja = vkTuoteService.alePros(Double.valueOf(value),"").size();
+            model.addAttribute("outletTuotteet", vkTuoteService.alePros(Double.valueOf(value),"des"));
+            int riveja = vkTuoteService.alePros(Double.valueOf(value),"des").size();
             model.addAttribute("riveja",riveja);
         }
+        
+        
         else if (nappi.equals("IDa")){
             model.addAttribute("outletTuotteet", vkTuoteService.listDbByOutId("asc"));
-            int riveja = vkTuoteService.listDbByOutId("").size();
+            int riveja = vkTuoteService.listDbByOutId("asc").size();
             model.addAttribute("riveja",riveja);
         }
         else if (nappi.equals("IDd")){
             model.addAttribute("outletTuotteet", vkTuoteService.listDbByOutId("des"));
-            int riveja = vkTuoteService.listDbByOutId("").size();
+            int riveja = vkTuoteService.listDbByOutId("des").size();
             model.addAttribute("riveja",riveja);
         }
+        
         else if (nappi.equals("Tuote")){
             value = "%"+value+"%";
             model.addAttribute("outletTuotteet", vkTuoteService.listByNimi(value));
@@ -144,15 +160,17 @@ public class DefaultController {
         else if (nappi.equals("Hinta")){
             if (!isNumeric(value)) value="99999";
             model.addAttribute("outletTuotteet", vkTuoteService.listByHinta(Double.valueOf(value),"asc"));
-            int riveja = vkTuoteService.listByHinta(Double.valueOf(value),"").size();
+            int riveja = vkTuoteService.listByHinta(Double.valueOf(value),"asc").size();
             model.addAttribute("riveja",riveja);
         }
         else if (nappi.equals("Hintad")){
             if (!isNumeric(value)) value="99999";
-            model.addAttribute("outletTuotteet", vkTuoteService.listByHinta(Double.valueOf(value),""));
-            int riveja = vkTuoteService.listByHinta(Double.valueOf(value),"").size();
+            model.addAttribute("outletTuotteet", vkTuoteService.listByHinta(Double.valueOf(value),"des"));
+            int riveja = vkTuoteService.listByHinta(Double.valueOf(value),"des").size();
             model.addAttribute("riveja",riveja);
         }
+        
+        
         else if (nappi.equals("A")){
             model.addAttribute("outletTuotteet", vkTuoteService.listByPoisto(false));
             int riveja = vkTuoteService.listByPoisto(false).size();
@@ -164,16 +182,20 @@ public class DefaultController {
             model.addAttribute("riveja",riveja);
         }
         else if (nappi.equals("Muuttunut")){
+            if (date!=null){
+                value = String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(date), LocalDate.now())); 
+            }
+            
             if (value==""){
                 value="0";
             }
             else if (!isNumeric(value)) value="0";
             
-            LocalDate pvSitten = LocalDate.now();
-            pvSitten=pvSitten.minusDays(Long.valueOf(value));
+            //LocalDate pvSitten = LocalDate.now();
+            //pvSitten=pvSitten.minusDays(Long.valueOf(value));
             
-            model.addAttribute("outletTuotteet", vkTuoteService.listByMuuttunut(pvSitten));
-            int riveja = vkTuoteService.listByMuuttunut(pvSitten).size();
+            model.addAttribute("outletTuotteet", vkTuoteService.listByMuuttunut(value));
+            int riveja = vkTuoteService.listByMuuttunut(value).size();
             model.addAttribute("riveja",riveja);
         }
         else {
