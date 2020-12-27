@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title='Keräys')" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+            <div class="container">
+            
+                
+                <table>
+                    <tr th:each="loytynyt : ${loytyneet}"> 
+                        <td><div th:text="${loytynyt}"/></td> 
+                    </tr>
+                    
+                    
+                </table>
+                <a href="/vkoutlet/piilossa">takaisin</a>
+                
+            
+        </div>
+    </body>
+</html>

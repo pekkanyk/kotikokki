@@ -18,6 +18,7 @@ import kotikokki.domain.OutletTuote;
 public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     //haku outId mukaan
     OutletTuote findByOutId(int id);
+    OutletTuote findByOutIdAndDeletedIsNull(int id);
     
     //aktiivisten lkm
     long countByDeletedIsNull();
@@ -90,8 +91,16 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     List<OutletTuote> deletedListAllByOutId();
     
     //poistetut tietylta paivalta
-    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.deleted IS ?1 ORDER BY o.pid ASC")
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.deleted IS ?1 ORDER BY o.pid DESC")
     List<OutletTuote> deletedListByDate(LocalDate date);
+    
+    //aktiivinen pid
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.pid IS ?1 ORDER BY o.outId ASC")
+    List<OutletTuote> activeByPid(int pid);
+    
+    //poistunut pid
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.pid IS ?1 ORDER BY o.outId ASC")
+    List<OutletTuote> deletedByPid(int pid);
     
     public List<OutletTuote> findByDeletedIsNullOrderByAlennusAsc();
     public List<OutletTuote> findByDeletedNotNull();

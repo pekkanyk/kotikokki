@@ -10,13 +10,14 @@
                     <div class="row">
                         <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo"/></div>
                         <div class="col-md-2"><input type="date" name="date"></div>
-                        <div class="col-md-1"><a href="/vkoutlet/reload">reload</a></div>
                         <div class="col-md-2"><a href="/vkoutlet/historia">poistuneet</a></div>
                         <div class="col-md-2"><a href="/vkoutlet?value=-999&date=&nappi=Ale"><5% NoApple</a></div>
                         <div class="col-md-2"></div>
+                        <div class="col-md-1"></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4" th:text="${riveja + ' / ' + totalRows}">0</div>
+                        <div class="col-md-2" th:text="${riveja + ' / ' + totalRows}">0</div>
+                        <div class="col-md-2"><a href="/vkoutlet/reload">reload</a></div>
                     </div>
                 <div class="row">
                     <div class="col-md-2"></div>
@@ -40,20 +41,22 @@
                         <th>Takuu</th>
                         <th>Kunto</th>
                         <th><input type="submit" name="nappi" value="A"/></th>
+                        <th>K</th>
                         <th><input type="submit" name="nappi" value="D"/></th>
                         <th><input type="submit" name="nappi" value="Muuttunut"/></th>
                     </tr>
                 </thead>
                     <tr th:each="outlet : ${outletTuotteet}" class="table">
-                        <td th:text="${outlet.outId}"></td>
+                        <td><span title="pid" th:title="${'PID'+outlet.pid}"><span th:text="${outlet.outId}">outID</span></span></td>
                         <td th:text="${outlet.name}"></td>
                         <td th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+' €'"></td>
                         <td th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+' €'"></td>
                         <td th:text="${#numbers.formatDecimal(outlet.alennus == null ? 0 : outlet.alennus, 0, 0)+' %'}"></td>
                         <td th:text="${outlet.warranty+' kk'}"></td>
                         <td th:text="${outlet.condition}"></td>
-                        <td><div th:if="${!outlet.poistotuote}">Ei</div></td>
-                        <td><div th:if="${outlet.dumppituote}">D</div></td>
+                        <td><div th:if="${!outlet.poistotuote}"><span title="Ei aktiivinen tuote">Ei</span></div></td>
+                        <td><div th:if="${outlet.kampanja}"><span title="Kampanja meneillään" th:title="${'Kampanja '+outlet.kamploppuu+' asti'}">K</span></div></td>
+                        <td><div th:if="${outlet.dumppituote}"><span title="Dumppituote">D</span></div></td>
                         <td th:text="${outlet.priceUpdatedDate}"></td>
                     </tr>
                 </table>

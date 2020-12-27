@@ -7,7 +7,6 @@ package kotikokki.service;
 
 import java.net.URL;
 import java.util.Scanner;
-import kotikokki.domain.vk.Tuotteet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import kotikokki.domain.OutletHistoria;
 import kotikokki.domain.OutletTuote;
@@ -63,7 +61,12 @@ public class VkTuoteService {
                 outlet.setNorPrice(product.getPrice().getCurrent());
             }
             else outlet.setNorPrice(product.getPrice().getOriginal());
-            
+            if (product.getPrice().getDiscount()!= null && product.getPrice().getDiscountAmount()>0) {
+                outlet.setKampanja(true);
+                outlet.setKamploppuu(product.getPrice().getDiscount().kampanjanLoppuPaiva());
+                //outlet.setKamploppuu(LocalDate.now());
+            }
+            else outlet.setKampanja(false);
             outlet.setOutPrice(product.getCustomerReturnsInfo().getPrice_with_tax());
             outlet.setUpdated(true);
             outlet.setPriceUpdatedDate(LocalDate.now());
@@ -205,6 +208,11 @@ public class VkTuoteService {
     public List<OutletTuote> listByMuuttunut(String pvSitten){
         LocalDate date = LocalDate.now().minusDays(Long.valueOf(pvSitten));
         return outletTuoteRepository.activeListAllSortChangeDateDesc(date);
+    }
+    
+    public List<OutletTuote> haePidMukaan(String haku, int pid){
+        if (haku.equals("active")) return outletTuoteRepository.activeByPid(pid);
+        else return outletTuoteRepository.deletedByPid(pid);
     }
     /*
     public void delDb(){

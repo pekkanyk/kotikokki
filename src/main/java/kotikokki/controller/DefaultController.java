@@ -67,6 +67,17 @@ public class DefaultController {
         return "listat_generate";
     }
     
+    @GetMapping("/vkoutlet/piilossa")
+    public String piilotetut(Model model) {
+        return "piilossa";
+    }
+    @PostMapping("/vkoutlet/piilossa")
+    public String haePiilotetut(Model model, @RequestParam String lista_cp){
+        
+        model.addAttribute("loytyneet", listaService.etsiPiilotetut(lista_cp));
+        return "loydetyt";
+    }
+    
     @GetMapping("/vkoutlet/reload")
     public String lataaLista() throws IOException {
         vkTuoteService.reloadDb();
@@ -98,10 +109,16 @@ public class DefaultController {
                 }
         }
         else if (nappi.equals("Tuote")){
+            if (isNumeric(value)){
+                model.addAttribute("outletHistoriaTuotteet",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)));
+                model.addAttribute("riveja",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)).size());
+            }
+            else {
             value = "%"+value+"%";
             model.addAttribute("outletHistoriaTuotteet", vkTuoteService.historiahaku("tuote", value));
             int riveja = vkTuoteService.historiahaku("tuote", value).size();
             model.addAttribute("riveja",riveja);
+            }
         }
         else {
             model.addAttribute("riveja",vkTuoteService.historiaHakuTarkkaPaiva(LocalDate.now()).size());
@@ -146,10 +163,16 @@ public class DefaultController {
         }
         
         else if (nappi.equals("Tuote")){
+            if (isNumeric(value)){
+                model.addAttribute("outletTuotteet", vkTuoteService.haePidMukaan("active", Integer.valueOf(value)));
+                model.addAttribute("riveja",vkTuoteService.haePidMukaan("active", Integer.valueOf(value)).size());
+            }
+            else {
             value = "%"+value+"%";
             model.addAttribute("outletTuotteet", vkTuoteService.listByNimi(value));
             int riveja = vkTuoteService.listByNimi(value).size();
             model.addAttribute("riveja",riveja);
+                    }
         }
         else if (nappi.equals("Hinta")){
             if (!isNumeric(value)) value="99999";

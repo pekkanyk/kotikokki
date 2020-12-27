@@ -20,12 +20,12 @@ public class Price {
     private transient int discountPercentage;
     private transient double originalTaxless;
     private transient String unit;
-    private transient double discount;
+    private Discount discount;
     private transient String originalFormatted;
     private transient double deposit;
     private transient String currentFormatted;
     private transient double taxRate;
-    private transient double discountAmount;
+    private double discountAmount;
     private double current;
 
     public double getCurrent() {
@@ -36,6 +36,17 @@ public class Price {
         return original;
     }
 
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public Discount getDiscount() {
+        return discount;
+    }
+    
+    
+    
+    
     
     
 }

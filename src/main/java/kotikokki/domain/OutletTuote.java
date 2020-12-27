@@ -5,6 +5,7 @@
  */
 package kotikokki.domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -40,10 +41,26 @@ public class OutletTuote{
     private int warranty;
     private String condition;
     private LocalDate deleted;
-    //@Column(columnDefinition = "integer default 0")
-    //private int jsSaldo;
-    //@Column(columnDefinition = "boolean default false")
-    //private boolean isEol;
+    private boolean kampanja;
+    private LocalDate kamploppuu;
+
+    public LocalDate getKamploppuu() {
+        return kamploppuu;
+    }
+
+    public void setKamploppuu(LocalDate kamploppuu) {
+        this.kamploppuu = kamploppuu;
+    }
+    
+    
+
+    public boolean isKampanja() {
+        return kampanja;
+    }
+
+    public void setKampanja(boolean kampanja) {
+        this.kampanja = kampanja;
+    }
 
     public LocalDate getDeleted() {
         return deleted;

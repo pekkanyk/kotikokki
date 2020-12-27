@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import kotikokki.repository.OutletTuoteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ListaService {
+    @Autowired
+    private OutletTuoteRepository outletTuoteRepository;
         
     public List<String> listaa(String paikka, String lista_cp){
         List<String> lista = new ArrayList();
@@ -92,5 +96,37 @@ public class ListaService {
         
         return sivutettu_lista;
     }
+    public List<String> etsiPiilotetut(String lista_cp){
+        List<String> loydetyt = new ArrayList();
+        Scanner scanner = new Scanner(lista_cp);
+        while (scanner.hasNextLine()) {
+        String line = scanner.nextLine();
+        String[] rivi_array = line.split("\t");
+        int id=0;
+        if (isNumeric(rivi_array[0])){
+            id = Integer.valueOf(rivi_array[0].trim());
+        }
+        
+        if (outletTuoteRepository.findByOutIdAndDeletedIsNull(id)==null && id!=0){
+            loydetyt.add(String.valueOf(id));
+        }
+        
+        }
+        scanner.close();
+        
+        return loydetyt;
+    }
+    
+    private static boolean isNumeric(String strNum) {
+    if (strNum == null) {
+        return false;
+    }
+    try {
+        double d = Double.parseDouble(strNum);
+    } catch (NumberFormatException nfe) {
+        return false;
+    }
+    return true;
+}
     
 }
