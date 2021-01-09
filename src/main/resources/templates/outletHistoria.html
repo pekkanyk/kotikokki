@@ -34,12 +34,12 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th class="col-md-5"><input type="submit" name="nappi" value="Tuote"/></th>
+                        <th class="col-md-6"><input type="submit" name="nappi" value="Tuote"/></th>
                         <th>Hinta</th>
                         <th>Viimeisin</th>
-                        <th>Ale %</th>
+                        <th>Ale%</th>
                         <th>Takuu</th>
-                        <th>Kunto</th>
+                        <th>Kl</th>
                         <th>A</th>
                         <th>D</th>
                         <th><input type="submit" name="nappi" value="Poistunut"/></th>
@@ -48,8 +48,8 @@
                     <tr th:each="outlet : ${outletHistoriaTuotteet}" class="table">
                         <td><span title="pid" th:title="${'PID'+outlet.pid}"><span th:text="${outlet.outId}">outID</span></span></td>
                         <td th:text="${outlet.name}"></td>
-                        <td th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+' €'"></td>
-                        <td th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+' €'"></td>
+                        <td th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+'€'"></td>
+                        <td th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+'€'"></td>
                         <td th:text="${#numbers.formatDecimal(outlet.alennus == null ? 0 : outlet.alennus, 0, 0)+' %'}"></td>
                         <td th:text="${outlet.warranty+' kk'}"></td>
                         <td th:text="${outlet.condition}"></td>

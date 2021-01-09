@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head(title='Outlet')" lang="en">
+        <meta charset="UTF-8" />
+        <title>Otsikko</title>
+    </head>
+    <body>
+            <div class="container">
+                 <div class="row">
+                        <div class="col-md-2"><a href="/vkoutlet/">takaisin</a></div>
+                        
+                    </div>
+                <div class="row">
+                        <div class="col-md-3" th:text="${'Eri tuotteita: ' + active_distinct}">0</div>
+                    </div>
+            
+            <div class="row">
+                <div class="col-md-4 col-xs-12">
+                    <div th:text="${'Aktiiviset: ' + totalRows_a+ ', kok.ale '+#numbers.formatDecimal(active_ka == null ? 0 : active_ka, 0, 2)+' %'}">Aktiiviset</div>
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th><span title="Aktiivisten tuotteiden viimeisimmän hintamuutoksen päivämäärä">Pvm</span></th>
+                        <th>Kpl</th>
+                        <th>Kok. Ale %</th>
+                    </tr>
+                </thead>
+                    <tr th:each="a_pvm : ${active_paivat}" class="table">
+                        <td th:text="${a_pvm.pvm}"></td>
+                        <td th:text="${a_pvm.count}"></td>
+                        <td th:text="${#numbers.formatDecimal(a_pvm.ale == null ? 0 : a_pvm.ale, 0, 2)+' %'}"></td>
+                    </tr>
+                </table>
+            </div>
+             
+                <div class="col-md-4 col-xs-12">
+                    <div th:text="${'Poistuneet: ' + totalRows_d+ ', kok.ale '+#numbers.formatDecimal(deleted_ka == null ? 0 : deleted_ka, 0, 2)+' % (taulukossa viim.90pv)'}">Poistuneet</div>
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th><span title="Poistuneet päivämäärä">Pvm</span></th>
+                        <th><span title="Poistuneiden kappalemäärä">Kpl</span></th>
+                        <th>Kok. Ale %</th>
+                        <th><span title="Päiviä hinnanmuutoksen ja poistumisen välillä">PV</span></th>
+                    </tr>
+                </thead>
+                    <tr th:each="d_pvm : ${deleted_paivat}" class="table">
+                        <td th:text="${d_pvm.pvm}"></td>
+                        <td th:text="${d_pvm.count}"></td>
+                        <td th:text="${#numbers.formatDecimal(d_pvm.ale == null ? 0 : d_pvm.ale, 0, 2)+' %'}"></td>
+                        <td th:text="${#numbers.formatDecimal(d_pvm.myyntipvka == null ? 0 : d_pvm.myyntipvka, 0, 2)}"></td>
+                    </tr>
+                </table>
+            </div>
+                
+                <div class="col-md-4 col-xs-12">
+                    <div th:text="${'Ensikertaa nähty (viim. 90 pv). KA P (tot): '+#numbers.formatDecimal(poistumiskeskiarvo == null ? 0 : poistumiskeskiarvo, 0, 2)}">Ensikertaa nähty (viim. 90 pv)</div>
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th><span title="Nähty ensikerran pvm">Pvm</span></th>
+                        <th><span title="Nähty ensikerran kpl">Kpl</span></th>
+                        <th><span title="Poistunut kpl">P</span></th>
+                        <th><span title="Aktiivisena kpl">A</span></th>
+                        <th><span title="Keskimäärin aktiivisena päiviä (poistuneet)">KA P</span></th>
+                        <th><span title="Keskimäärin aktiivisena päiviä (kaikki)">KA A</span></th>
+                    </tr>
+                </thead>
+                    <tr th:each="lisatty : ${lisatyt}" class="table">
+                        <td th:text="${lisatty.pvm}"></td>
+                        <td th:text="${lisatty.count}"></td>
+                        <td th:text="${lisatty.count2}"></td>
+                        <td th:with="result=${lisatty.count - lisatty.count2}">
+                            <span th:text="${result}"></span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(lisatty.myyntipvka == null ? 0 : lisatty.myyntipvka, 0, 2)}"></td>
+                        <td th:text="${#numbers.formatDecimal(lisatty.ale == null ? 0 : lisatty.ale, 0, 2)}"></td>
+                    </tr>
+                </table>
+            </div>
+                
+                </div>    
+        </div>
+    </body>
+</html>

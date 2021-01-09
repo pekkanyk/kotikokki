@@ -84,6 +84,20 @@ public class DefaultController {
         return "redirect:/vkoutlet";
     }
     
+    @GetMapping("/vkoutlet/stats")
+    public String statistiikka(Model model){
+        model.addAttribute("totalRows_a",vkTuoteService.rivienLkm("active"));
+        model.addAttribute("totalRows_d",vkTuoteService.rivienLkm("deleted"));
+        model.addAttribute("active_distinct",vkTuoteService.aktiivisetEriTuotteet());
+        model.addAttribute("active_paivat", vkTuoteService.aktiivisetPvm());
+        model.addAttribute("deleted_paivat", vkTuoteService.deletedPvm());
+        model.addAttribute("active_ka", vkTuoteService.activeKa());
+        model.addAttribute("deleted_ka", vkTuoteService.deletedKa());
+        model.addAttribute("lisatyt", vkTuoteService.lisatytPvm());
+        model.addAttribute("poistumiskeskiarvo", vkTuoteService.lisatytKeskimaarinAktiivisena());
+        return "stats";
+    }
+    
     @GetMapping("/vkoutlet/historia")
     public String listaus(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
         if (nappi==null) nappi="main";
@@ -130,6 +144,9 @@ public class DefaultController {
     @GetMapping("/vkoutlet")
     public String outletSort(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
         model.addAttribute("totalRows",vkTuoteService.rivienLkm("active"));
+        model.addAttribute("listaHaettu",vkTuoteService.listaHaettuAika());
+        model.addAttribute("twoWeeksAgo",LocalDate.now().minusDays(14).toString());
+        model.addAttribute("monthAgo",LocalDate.now().minusDays(32).toString());
         if (nappi == null) {
             nappi="Ale";
             value="10";
@@ -199,6 +216,12 @@ public class DefaultController {
             model.addAttribute("riveja",riveja);
         }
         else if (nappi.equals("Muuttunut")){
+            if (!date.isEmpty() && isNumeric(value)){
+                model.addAttribute("outletTuotteet", vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)));
+                model.addAttribute("riveja",vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)).size());
+                
+            }
+            else {
             if (!date.isEmpty()){
                 value = String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(date), LocalDate.now())); 
             }
@@ -214,6 +237,7 @@ public class DefaultController {
             model.addAttribute("outletTuotteet", vkTuoteService.listByMuuttunut(value));
             int riveja = vkTuoteService.listByMuuttunut(value).size();
             model.addAttribute("riveja",riveja);
+            }
         }
         else {
      

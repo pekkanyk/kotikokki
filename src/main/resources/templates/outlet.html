@@ -10,14 +10,18 @@
                     <div class="row">
                         <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo"/></div>
                         <div class="col-md-2"><input type="date" name="date"></div>
-                        <div class="col-md-2"><a href="/vkoutlet/historia">poistuneet</a></div>
-                        <div class="col-md-2"><a href="/vkoutlet?value=-999&date=&nappi=Ale"><5% NoApple</a></div>
-                        <div class="col-md-2"></div>
-                        <div class="col-md-1"></div>
+                        <div class="col-md-1"><a href="/vkoutlet/historia">poistuneet</a></div>
+                        <div class="col-md-1"><a href="/vkoutlet?value=-999&date=&nappi=Ale"><5% NoApple</a></div>
+                        <div class="col-md-1"><a th:href="${'/vkoutlet?value=0&date='+twoWeeksAgo+'&nappi=Muuttunut'}">>14 pv </a></div>
+                        <div class="col-md-1"><a th:href="${'/vkoutlet?value=98&date='+twoWeeksAgo+'&nappi=Muuttunut'}">>14 pv, >100€</a></div>
+                        <div class="col-md-1"><a th:href="${'/vkoutlet?value=348&date='+twoWeeksAgo+'&nappi=Muuttunut'}">>14 pv, >350€</a></div>
+                        <div class="col-md-1"><a th:href="${'/vkoutlet?value=998&date='+twoWeeksAgo+'&nappi=Muuttunut'}">>14 pv, >1000€</a></div>
+                        <div class="col-md-1"><a th:href="${'/vkoutlet?value=98&date='+monthAgo+'&nappi=Muuttunut'}">>32 pv, >100€</a></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-2" th:text="${riveja + ' / ' + totalRows}">0</div>
+                        <div class="col-md-3" th:text="${riveja + ' / ' + totalRows + ' Noudettu: ' +listaHaettu}">0</div>
                         <div class="col-md-2"><a href="/vkoutlet/reload">reload</a></div>
+                        <div class="col-md-2"><a href="/vkoutlet/stats">stats</a></div>
                     </div>
                 <div class="row">
                     <div class="col-md-2"></div>
@@ -34,29 +38,31 @@
                 <thead>
                     <tr>
                         <th><button name="nappi" type="submit" value="IDd">&uArr;</button><button name="nappi" type="submit" value="IDa">&dArr;</button></th>
-                        <th class="col-md-5"><input type="submit" name="nappi" value="Tuote"/></th>
-                        <th>Hinta<button name="nappi" type="submit" value="Hinta">&uArr;</button><button name="nappi" type="submit" value="Hintad">&dArr;</button></th>
+                        <th class="col-md-6"><input type="submit" name="nappi" value="Tuote"/></th>
+                        <th>Hinta<br><button name="nappi" type="submit" value="Hinta">&uArr;</button><button name="nappi" type="submit" value="Hintad">&dArr;</button></th>
                         <th>Viimeisin</th>
-                        <th>Ale %<button name="nappi" type="submit" value="Ale">&uArr;</button><button name="nappi" type="submit" value="Aled">&dArr;</button></th>
+                        <th>Ale%<br><button name="nappi" type="submit" value="Ale">&uArr;</button><button name="nappi" type="submit" value="Aled">&dArr;</button></th>
                         <th>Takuu</th>
-                        <th>Kunto</th>
+                        <th><span title="Kuntoluokka">Kl</span></th>
                         <th><input type="submit" name="nappi" value="A"/></th>
-                        <th>K</th>
+                        <th><span title="Kampanja meneillään">K</span></th>
                         <th><input type="submit" name="nappi" value="D"/></th>
+                        <th><span title="Tuote tilattavissa, varastosa kpl">V</span></th>
                         <th><input type="submit" name="nappi" value="Muuttunut"/></th>
                     </tr>
                 </thead>
                     <tr th:each="outlet : ${outletTuotteet}" class="table">
                         <td><span title="pid" th:title="${'PID'+outlet.pid}"><span th:text="${outlet.outId}">outID</span></span></td>
                         <td th:text="${outlet.name}"></td>
-                        <td th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+' €'"></td>
-                        <td th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+' €'"></td>
+                        <td th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+'€'"></td>
+                        <td th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+'€'"></td>
                         <td th:text="${#numbers.formatDecimal(outlet.alennus == null ? 0 : outlet.alennus, 0, 0)+' %'}"></td>
                         <td th:text="${outlet.warranty+' kk'}"></td>
                         <td th:text="${outlet.condition}"></td>
                         <td><div th:if="${!outlet.poistotuote}"><span title="Ei aktiivinen tuote">Ei</span></div></td>
                         <td><div th:if="${outlet.kampanja}"><span title="Kampanja meneillään" th:title="${'Kampanja '+outlet.kamploppuu+' asti'}">K</span></div></td>
                         <td><div th:if="${outlet.dumppituote}"><span title="Dumppituote">D</span></div></td>
+                        <td><div th:if="${outlet.onVarasto}"><span title="Tilattavissa. Varastossa kpl" th:text="${outlet.varastossa}">0</span></div></td>
                         <td th:text="${outlet.priceUpdatedDate}"></td>
                     </tr>
                 </table>

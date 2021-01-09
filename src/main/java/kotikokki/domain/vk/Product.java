@@ -65,7 +65,7 @@ public class Product{
     private transient String updateStartTime;
     private transient String[] demoLocations;
     private transient String[] campaigns;
-    private transient Availability availability;
+    private Availability availability;
     private CustomerReturnsInfo customerReturnsInfo;
 
     public boolean isActive() {

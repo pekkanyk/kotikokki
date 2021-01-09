@@ -43,6 +43,9 @@ public class OutletTuote{
     private LocalDate deleted;
     private boolean kampanja;
     private LocalDate kamploppuu;
+    private LocalDate firstSeen;
+    private int varastossa;
+    private boolean onVarasto;
 
     public LocalDate getKamploppuu() {
         return kamploppuu;
@@ -50,6 +53,33 @@ public class OutletTuote{
 
     public void setKamploppuu(LocalDate kamploppuu) {
         this.kamploppuu = kamploppuu;
+    }
+
+    public int getVarastossa() {
+        return varastossa;
+    }
+
+    public boolean isOnVarasto() {
+        return onVarasto;
+    }
+
+    public void setOnVarasto(boolean onVarasto) {
+        this.onVarasto = onVarasto;
+    }
+    
+    
+    public void setVarastossa(int varastossa) {
+        this.varastossa = varastossa;
+    }
+
+    
+    
+    public LocalDate getFirstSeen() {
+        return firstSeen;
+    }
+
+    public void setFirstSeen(LocalDate firstSeen) {
+        this.firstSeen = firstSeen;
     }
     
     
