@@ -16,6 +16,23 @@ import kotikokki.domain.OutletTuote;
  * @author Pekka
  */
 public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
+    //haut nimen perusteella
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
+    List<OutletTuote> haeNimellaKaikistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
+    List<OutletTuote> haeNimellaAktiivisistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
+    List<OutletTuote> haeNimellaPoistuneistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
+    
+    
+    //haut PID perusteella
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.pid IS ?1 ORDER BY o.priceUpdatedDate DESC")
+    List<OutletTuote> activeByPid(int pid);
+    @Query ("SELECT o FROM OutletTuote o WHERE o.pid IS ?1 ORDER BY o.deleted DESC,o.priceUpdatedDate DESC")
+    List<OutletTuote> allbyPid(int pid);
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.pid IS ?1 ORDER BY o.deleted DESC,o.priceUpdatedDate DESC")
+    List<OutletTuote> deletedByPid(int pid);
+    
     //haku outId mukaan
     OutletTuote findByOutId(int id);
     OutletTuote findByOutIdAndDeletedIsNull(int id);
@@ -30,6 +47,9 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     @Query ("SELECT o FROM OutletTuote o WHERE name LIKE LOWER(?1) ORDER BY o.name")  // ei toimi
     List<OutletTuote> activeSearchName(String haku);
     List<OutletTuote> findByNameLikeIgnoreCaseAndDeletedIsNullOrderByNameAsc(String haku);
+    List<OutletTuote> findByNameLikeIgnoreCaseOrderByNameAsc(String haku);
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
+    List<OutletTuote> searchByName(String haku);
     
     //hidden feat nro2. (ale -999) <x% outID:n mukaan, ei Applea
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.alennus <= ?1 AND o.name NOT LIKE %?2% ORDER BY o.alennus ASC")
@@ -94,13 +114,7 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.deleted IS ?1 ORDER BY o.pid DESC")
     List<OutletTuote> deletedListByDate(LocalDate date);
     
-    //aktiivinen pid
-    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.pid IS ?1 ORDER BY o.outId ASC")
-    List<OutletTuote> activeByPid(int pid);
     
-    //poistunut pid
-    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.pid IS ?1 ORDER BY o.outId ASC")
-    List<OutletTuote> deletedByPid(int pid);
     
     //aktiivinen yli x pv vanha ja yli x e hintainen, vanhin ensin
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.priceUpdatedDate <= ?1 AND o.outPrice >= ?2 ORDER BY o.priceUpdatedDate ASC, o.pid ASC,o.outId ASC")
@@ -121,6 +135,19 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     //aktiivisten eri tuotteiden lukumaara
     @Query ("SELECT COUNT (DISTINCT o.pid) FROM OutletTuote o WHERE o.deleted IS NULL")
     long activeDistinctProducts();
+    //aktiivisten tuotteiden pid:t
+    @Query ("SELECT DISTINCT o.pid FROM OutletTuote o WHERE o.deleted IS NULL")
+    List<Integer> activeDistinctProductPids();
+    
+    //kuinka monta samalla pid:lla olevaa aktiivista on
+    @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.pid=?1 AND o.deleted IS NULL")
+    int countPid(int pid);
+    //kaikenkaikkiaan, myos poistetut
+    @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.pid=?1")
+    int countPidAll(int pid);
+    //ja poistetut, yli pvm sitten
+    @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.pid=?1 AND o.deleted IS NOT NULL")
+    int countPidDeleted(int pid);
     
     //keskiarvo alennuksen laskua
     @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE o.deleted IS NULL")
@@ -154,11 +181,13 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     //paivia lisayksen ja poistumisen valilla
     @Query (value= "SELECT AVG(deleted - first_seen) FROM outlet_tuote WHERE first_seen=?1 AND deleted IS NOT NULL", nativeQuery = true)
     double deletedLisaysPv(LocalDate date); 
-    //kaikkien poistettujen yhteenlaskettu keskiarvopoistumisaika 21.12.2020 jalkeen (vaaristaa tilastoja, silloin seuranta aloitettu)
-    @Query (value= "SELECT AVG(deleted - first_seen) FROM outlet_tuote WHERE first_seen>'2020-12-21' AND deleted IS NOT NULL", nativeQuery = true)
+    //kaikkien poistettujen yhteenlaskettu keskiarvopoistumisaika 7.1.2021 jalkeen (vaaristaa tilastoja, silloin seuranta aloitettu)
+    @Query (value= "SELECT AVG(deleted - first_seen) FROM outlet_tuote WHERE first_seen>='2021-01-07' AND deleted IS NOT NULL", nativeQuery = true)
     double deletedLisaysPvKaikkiKa();
     @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.firstSeen=?1 AND o.deleted IS NOT NULL")
     long lisaysPoistuneetPvm(LocalDate date);
+    @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.firstSeen=?1 AND o.deleted IS NULL")
+    long lisaysAktiivisetPvm(LocalDate date);
     
     @Query (value= "SELECT SUM(deleted - first_seen) FROM outlet_tuote WHERE first_seen=?1 AND deleted IS NOT NULL", nativeQuery = true)
     long deletedLisaysPvKpl(LocalDate date); 
@@ -166,7 +195,47 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     @Query (value= "SELECT SUM(CURRENT_DATE - first_seen) FROM outlet_tuote WHERE first_seen=?1 AND deleted IS NULL", nativeQuery = true)
     long activeLisaysPvKpl(LocalDate date);
     
-        
+    
+    //pvm kikkailu, jotta statsit oikeammat.
+    @Query (value= "SELECT SUM(CURRENT_DATE - first_seen) FROM outlet_tuote WHERE deleted IS NULL AND first_seen>='2021-01-07'", nativeQuery = true)
+    long activeDays();
+    @Query (value= "SELECT SUM(deleted - first_seen) FROM outlet_tuote WHERE deleted IS NOT NULL AND first_seen>='2021-01-07'", nativeQuery = true)
+    long deletedDays();
+    @Query ("SELECT COUNT(o) FROM OutletTuote o WHERE firstSeen>='2021-01-07'")
+    long countAll();
+    
+    //@Query ("SELECT o FROM OutletTuote o WHERE o.pid IN (SELECT DISTINCT o.pid FROM OutletTuote o WHERE o.deleted IS NULL) ORDER BY o.pid ASC")
+    //List<OutletTuote> yliXaktiivista(long x);
+    
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.priceUpdatedDate = ?1 ORDER BY o.firstSeen ASC")
+    List<OutletTuote> activeForDate(LocalDate date);
+    @Query ("SELECT o FROM OutletTuote o WHERE o.firstSeen = ?1 ORDER BY o.pid ASC")
+    List<OutletTuote> firstSeenForDate(LocalDate date);
+    
+    @Query ("SELECT o FROM OutletTuote o WHERE o.dumppituote=true AND o.onVarasto=true AND o.deleted IS NULL ORDER BY o.pid ASC")
+    List<OutletTuote> activeDumppiVarastolla();
+    
+    @Query(value= "SELECT COUNT(*) FROM outlet_tuote o WHERE RIGHT(CAST(out_id AS Varchar(255)) ,1)=?1 AND deleted IS NULL", nativeQuery = true)
+    Long countLastNumberOfOutIdIs(String nro);
+    @Query(value= "SELECT COUNT(*) FROM outlet_tuote o WHERE RIGHT(CAST(out_id AS Varchar(255)) ,1)=?1 AND deleted IS NULL AND o.koko=?2", nativeQuery = true)
+    Integer countLastNumberOfOutIdIsSize(String nro,String koko);
+    
+    //historiaan liittyvia
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.name NOT LIKE '%lle%' AND o.deleted>=?2 AND o.deleted<=?3")
+    Double summaaOutPriceDeleted(String haku,LocalDate asti, LocalDate alkaen);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.name NOT LIKE '%lle%' AND o.deleted>=?2 AND o.deleted<=?3")
+    Double summaaNorPriceDeleted(String haku,LocalDate asti, LocalDate alkaen);
+    @Query("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.name NOT LIKE '%lle%' AND o.deleted>=?2 AND o.deleted<=?3 ORDER BY o.deleted ASC, o.name ASC")
+    List<OutletTuote> deletedSearchNameWithDate(String haku,LocalDate asti, LocalDate alkaen);
+    
+    //poistuneiden tuotteiden aleprosentteihin liityvia
+    @Query("SELECT DISTINCT o.condition FROM OutletTuote o WHERE o.deleted IS NOT NULL")
+    List<String> kuntoluokat();
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE o.condition=?1 AND o.deleted IS NOT NULL")
+    Double summaaPoistuneetOutPriceKuntoluokalla(String kuntoluokka);
+    @Query ("SELECT SUM (o.norPrice) FROM OutletTuote o WHERE o.condition=?1 AND o.deleted IS NOT NULL")
+    Double summaaPoistuneetNorPriceKuntoluokalla(String kuntoluokka);
+    
     public List<OutletTuote> findByDeletedIsNullOrderByAlennusAsc();
     public List<OutletTuote> findByDeletedNotNull();
     public List<OutletTuote> findByDeletedIsNull();
@@ -177,10 +246,8 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     public List<OutletTuote> findByPoistotuoteOrderByName(boolean poisto);
     public List<OutletTuote> findByDumppituoteOrderByName(boolean dumppi);
     public List<OutletTuote> findByPriceUpdatedDateBeforeOrderByNameAsc(LocalDate pvSitten);
-    public List<OutletTuote> findByNameLikeIgnoreCaseOrderByNameAsc(String haku);
     public void deleteByUpdated(boolean updated);
     public List<OutletTuote> findByUpdated(boolean updated);
-
     
     
 }

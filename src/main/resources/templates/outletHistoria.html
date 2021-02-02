@@ -5,19 +5,20 @@
         <title>Otsikko</title>
     </head>
     <body>
+        <header th:replace="fragments/outLayout :: header"></header>
             <div class="container">
                 <form method="GET" th:action="@{/vkoutlet/historia}" enctype="multipart/form-data" id="outlethistoria">
                     <div class="row">
                         <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo"/></div>
                         <div class="col-md-2"><input type="date" name="date"></div>
+                        <div class="col-md-2"><input type="date" name="alkaen"></div>
                         <div class="col-md-2"><a href="/vkoutlet/">myynnissä</a></div>
-                        <div class="col-md-2"></div>
                         <div class="col-md-2"></div>
                         <div class="col-md-1"></div>
                     </div>
                     <div class="row">
                         <div class="col-md-2" th:text="${riveja + ' / ' + totalRows}">0</div>
-                        <div class="col-md-2"></div>
+                        <div class="col-md-2" th:text="${#numbers.formatDecimal(alennus == null ? 0 : alennus, 0, 1)+' %'}"></div>
                     </div>
                 <div class="row">
                     <div class="col-md-2"></div>
@@ -43,6 +44,7 @@
                         <th>A</th>
                         <th>D</th>
                         <th><input type="submit" name="nappi" value="Poistunut"/></th>
+                        <th><span title="Päiviä aktiivisena">pA</span></th>
                     </tr>
                 </thead>
                     <tr th:each="outlet : ${outletHistoriaTuotteet}" class="table">
@@ -56,6 +58,7 @@
                         <td><div th:if="${!outlet.poistotuote}">Ei</div></td>
                         <td><div th:if="${outlet.dumppituote}">D</div></td>
                         <td th:text="${outlet.deleted}"></td>
+                        <td th:text="${outlet.daysActive()}"></td>
                     </tr>
                 </table>
             </div>

@@ -2,6 +2,28 @@
     margin-bottom: 20px;
 }
 
+a.deleted:link,
+a.deleted:visited,
+a.deleted:active,
+a.deleted:hover{
+    color: lightgray;
+    text-decoration: none;
+}
+.deleted {
+    color: lightgray;
+    text-decoration: none;
+}
+a.active:link,
+a.active:visited,
+a.active:active,
+a.active:hover{
+    color: black;
+    text-decoration: none;
+}
+.active {
+    color: black;
+    text-decoration: none;
+}
 .bottom-buffer-big {
     margin-bottom: 30px;
 }

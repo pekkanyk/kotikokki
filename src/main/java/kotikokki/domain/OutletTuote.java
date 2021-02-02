@@ -7,6 +7,8 @@ package kotikokki.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Column;
@@ -46,6 +48,8 @@ public class OutletTuote{
     private LocalDate firstSeen;
     private int varastossa;
     private boolean onVarasto;
+    private String koko;
+    private LocalDate pidLuotu;
 
     public LocalDate getKamploppuu() {
         return kamploppuu;
@@ -55,6 +59,15 @@ public class OutletTuote{
         this.kamploppuu = kamploppuu;
     }
 
+    public LocalDate getPidLuotu() {
+        return pidLuotu;
+    }
+
+    public void setPidLuotu(LocalDate pidLuotu) {
+        this.pidLuotu = pidLuotu;
+    }
+    
+    
     public int getVarastossa() {
         return varastossa;
     }
@@ -70,6 +83,14 @@ public class OutletTuote{
     
     public void setVarastossa(int varastossa) {
         this.varastossa = varastossa;
+    }
+
+    public String getKoko() {
+        return koko;
+    }
+
+    public void setKoko(String koko) {
+        this.koko = koko;
     }
 
     
@@ -205,5 +226,38 @@ public class OutletTuote{
         this.alennus = alennus;
     }
     
+    public String daysActive(){
+        String days = "-";
+        if (firstSeen.isAfter(LocalDate.parse("2020-12-22"))){
+            if (this.deleted==null){
+                days = String.valueOf(ChronoUnit.DAYS.between(firstSeen, LocalDate.now(ZoneId.of("Europe/Helsinki"))))+"/"+
+                        String.valueOf(ChronoUnit.DAYS.between(priceUpdatedDate, LocalDate.now(ZoneId.of("Europe/Helsinki"))));
+            }
+            else {
+                days = String.valueOf(ChronoUnit.DAYS.between(firstSeen, deleted))+"/"+String.valueOf(ChronoUnit.DAYS.between(priceUpdatedDate, deleted));
+            }
+        }
+        return days;
+    }
+    public String isDeleted(){
+        String del = "active";
+        if (this.deleted!=null) del = "deleted";
+        return del;
+    }
+    
+    public String changedOrDeleted(){
+        String date = priceUpdatedDate.toString();
+        if (deleted!=null) date = deleted.toString();
+        return date;
+    }
+    
+    public String similarName(){
+        String[] osat = name.split(",");
+        String hakunimi = osat[0].replaceAll("[0-9]", "%25");
+        hakunimi = hakunimi.replaceAll("\\+", "%2B"); //%2B = + merkki haettaessa
+        hakunimi = hakunimi.replaceAll(" ", "+");
+        
+        return hakunimi;
+    }
     
 }

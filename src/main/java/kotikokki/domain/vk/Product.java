@@ -93,6 +93,14 @@ public class Product{
         return isFireSale;
     }
 
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+    
     public String getWarranty() {
         return warranty;
     }
@@ -105,6 +113,10 @@ public class Product{
         return customerReturnsInfo;
     }
 
+    public PackageName getPackageName() {
+        return packageName;
+    }
+    
     
 }
 

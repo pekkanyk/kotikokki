@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import kotikokki.domain.OutletTuote;
 import kotikokki.service.ListaService;
 import kotikokki.service.ReseptiService;
 import kotikokki.service.TiliService;
@@ -86,6 +89,7 @@ public class DefaultController {
     
     @GetMapping("/vkoutlet/stats")
     public String statistiikka(Model model){
+        model.addAttribute("listaHaettu",vkTuoteService.listaHaettuAika());
         model.addAttribute("totalRows_a",vkTuoteService.rivienLkm("active"));
         model.addAttribute("totalRows_d",vkTuoteService.rivienLkm("deleted"));
         model.addAttribute("active_distinct",vkTuoteService.aktiivisetEriTuotteet());
@@ -95,11 +99,14 @@ public class DefaultController {
         model.addAttribute("deleted_ka", vkTuoteService.deletedKa());
         model.addAttribute("lisatyt", vkTuoteService.lisatytPvm());
         model.addAttribute("poistumiskeskiarvo", vkTuoteService.lisatytKeskimaarinAktiivisena());
+        model.addAttribute("numerot", vkTuoteService.countLastNbrs());
+        model.addAttribute("activeKa", vkTuoteService.keskimaarinAktiivisena());
+        model.addAttribute("deletedKuntoluokatPros", vkTuoteService.deletedProssatKuntoluokilla());
         return "stats";
     }
     
     @GetMapping("/vkoutlet/historia")
-    public String listaus(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
+    public String listaus(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date, @RequestParam(required = false) String alkaen){
         if (nappi==null) nappi="main";
         model.addAttribute("totalRows",vkTuoteService.rivienLkm("deleted"));
         
@@ -124,14 +131,22 @@ public class DefaultController {
         }
         else if (nappi.equals("Tuote")){
             if (isNumeric(value)){
-                model.addAttribute("outletHistoriaTuotteet",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)));
-                model.addAttribute("riveja",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)).size());
+                //model.addAttribute("outletHistoriaTuotteet",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)));
+                //model.addAttribute("riveja",vkTuoteService.haePidMukaan("deleted", Integer.valueOf(value)).size());
             }
             else {
             value = "%"+value+"%";
+            if (alkaen.equals("")) alkaen = LocalDate.now().toString();
+            if (date.equals("")) date = "2020-12-01";
+            List<OutletTuote> outletit = vkTuoteService.historiaAlkaenLoppuu(value, date, alkaen);
+            model.addAttribute("alennus",vkTuoteService.keskiArvoAlennus(value, date, alkaen));
+            model.addAttribute("outletHistoriaTuotteet", outletit);
+            model.addAttribute("riveja",outletit.size());
+            /*
             model.addAttribute("outletHistoriaTuotteet", vkTuoteService.historiahaku("tuote", value));
             int riveja = vkTuoteService.historiahaku("tuote", value).size();
             model.addAttribute("riveja",riveja);
+            */
             }
         }
         else {
@@ -142,7 +157,10 @@ public class DefaultController {
         return "outletHistoria";
     }
     @GetMapping("/vkoutlet")
-    public String outletSort(Model model, @RequestParam(required = false) String value, @RequestParam(required = false) String nappi, @RequestParam(required = false) String date){
+    public String outletSort(Model model, @RequestParam(required = false) String value, 
+                                          @RequestParam(required = false) String nappi, 
+                                          @RequestParam(required = false) String date,
+                                          @RequestParam(required = false) String activity){
         model.addAttribute("totalRows",vkTuoteService.rivienLkm("active"));
         model.addAttribute("listaHaettu",vkTuoteService.listaHaettuAika());
         model.addAttribute("twoWeeksAgo",LocalDate.now().minusDays(14).toString());
@@ -159,6 +177,20 @@ public class DefaultController {
             model.addAttribute("riveja",riveja);
             
         }
+        
+        else if (nappi.equals("haku")){
+            List<OutletTuote> outletTuotteet = new ArrayList();
+            if (isNumeric(value)){
+                outletTuotteet = vkTuoteService.haePidMukaan(Integer.valueOf(value),activity);
+            }
+            else {
+                outletTuotteet = vkTuoteService.haeNimellaAlkaenAsti(value, activity);
+            }
+            model.addAttribute("outletTuotteet", outletTuotteet);
+            model.addAttribute("riveja",outletTuotteet.size());
+        }
+        
+        
         
         else if (nappi.equals("Aled")){
             if (!isNumeric(value)) value="100";
@@ -181,8 +213,8 @@ public class DefaultController {
         
         else if (nappi.equals("Tuote")){
             if (isNumeric(value)){
-                model.addAttribute("outletTuotteet", vkTuoteService.haePidMukaan("active", Integer.valueOf(value)));
-                model.addAttribute("riveja",vkTuoteService.haePidMukaan("active", Integer.valueOf(value)).size());
+                //model.addAttribute("outletTuotteet", vkTuoteService.haePidMukaan("active", Integer.valueOf(value)));
+                //model.addAttribute("riveja",vkTuoteService.haePidMukaan("active", Integer.valueOf(value)).size());
             }
             else {
             value = "%"+value+"%";
@@ -206,20 +238,53 @@ public class DefaultController {
         
         
         else if (nappi.equals("A")){
+            if (isNumeric(value)){
+                List<OutletTuote> outletit = vkTuoteService.yliPaivaaSittenMyyty(value);
+                model.addAttribute("outletTuotteet",outletit);
+                model.addAttribute("riveja",outletit.size());
+                
+            }
+            else {
             model.addAttribute("outletTuotteet", vkTuoteService.listByPoisto(false));
             int riveja = vkTuoteService.listByPoisto(false).size();
             model.addAttribute("riveja",riveja);
+            }
         }
         else if (nappi.equals("D")){
-            model.addAttribute("outletTuotteet", vkTuoteService.listByDumppi(true));
-            int riveja = vkTuoteService.listByDumppi(true).size();
-            model.addAttribute("riveja",riveja);
+            if (isNumeric(value)){
+                //model.addAttribute("outletTuotteet", vkTuoteService.yliAikaUseampiTuote(Integer.parseInt(value)));
+                //model.addAttribute("riveja",vkTuoteService.yliAikaUseampiTuote(Integer.parseInt(value)).size());
+                if (date.isEmpty()) date = LocalDate.now().toString();
+                List<OutletTuote> lista = vkTuoteService.yliXaktiivista(Integer.parseInt(value),date);
+                
+                model.addAttribute("outletTuotteet", lista);
+                model.addAttribute("riveja",lista.size());
+            }
+            else if (value.equals("v")){
+                List<OutletTuote> lista = vkTuoteService.dumppiVarastolla();
+                model.addAttribute("outletTuotteet", lista);
+                model.addAttribute("riveja",lista.size());
+            }
+            else {
+                model.addAttribute("outletTuotteet", vkTuoteService.listByDumppi(true));
+                model.addAttribute("riveja",vkTuoteService.listByDumppi(true).size());
+            }
+            
         }
         else if (nappi.equals("Muuttunut")){
             if (!date.isEmpty() && isNumeric(value)){
-                model.addAttribute("outletTuotteet", vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)));
-                model.addAttribute("riveja",vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)).size());
-                
+                if (value.equals("-10")){
+                    model.addAttribute("outletTuotteet", vkTuoteService.aktiivisiaPvm(LocalDate.parse(date)));
+                    model.addAttribute("riveja", vkTuoteService.aktiivisiaPvm(LocalDate.parse(date)).size());
+                }
+                else if (value.equals("-11")){
+                    model.addAttribute("outletTuotteet", vkTuoteService.firstSeenPvm(LocalDate.parse(date)));
+                    model.addAttribute("riveja", vkTuoteService.firstSeenPvm(LocalDate.parse(date)).size());
+                }
+                else{
+                    model.addAttribute("outletTuotteet", vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)));
+                    model.addAttribute("riveja",vkTuoteService.ennenPvYliHinnan(LocalDate.parse(date), Double.valueOf(value)).size());
+                }
             }
             else {
             if (!date.isEmpty()){
