@@ -9,31 +9,48 @@
             <div class="container">
                 <form method="GET" th:action="@{/vkoutlet}" enctype="multipart/form-data" id="outlet">
                     <div class="row">
+                        <div class="col-md-2" th:text="${'Haun rivit: '+riveja}">0</div>
+                        <div class="col-md-2" th:text="${'Keskim. ale: '+#numbers.formatDecimal(alennus == null ? 0 : alennus, 0, 1)+' %'}"></div>
+                        <div class="col-md-5" th:text="${'Kuntoluokittain: '+aletKuntoluokittain}"></div>
+                        <div class="col-md-3" th:text="${'Summa: '+sumOutPrice}"></div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-1">
                             <select name="activity" id="activity">
-                                <option selected value="both">Kaikki</option>
-                                <option value="active">Aktiiviset</option>
-                                <option value="deleted">Poistuneet</option>
+                                <span th:if="${activity=='both'}"><option selected value="both">Kaikki</option></span>
+                                <span th:unless="${activity=='both'}"><option value="both">Kaikki</option></span>
+                                <span th:if="${activity=='active'}"><option selected value="active">Aktiiviset</option></span>
+                                <span th:unless="${activity=='active'}"><option value="active">Aktiiviset</option></span>
+                                <span th:if="${activity=='deleted'}"><option selected value="deleted">Poistuneet</option></span>
+                                <span th:unless="${activity=='deleted'}"><option value="deleted">Poistuneet</option></span>
                             </select>
                         </div>
-                        <div class="col-md-1">
-                            <select name="haku" id="haku">
-                                <option selected value="nimi">Nimi</option>
-                                <option value="pid">Pid</option>
-                                <option value="OutId">OutId</option>
-                                <option value="price">Hinta</option>
-                                <option value="ale">Alennus</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo"/></div>
-                        <div class="col-md-2"><input type="date" name="date"/></div>
-                        <div class="col-md-2"><input type="date" name="asti"/></div>
+                        
+                        <div class="col-md-3"><input class="inputbox-pitka" type="text" name="value" placeholder="arvo" th:value="${hakusana}"/></div>
+                        <div class="col-md-2"><input type="date" name="alkaen" th:value="${alkaen}"/></div>
+                        <div class="col-md-2"><input type="date" name="date" th:value="${date}"/></div>
                         <div class="col-md-2">
                             <select name="sort" id="sort">
-                                <option selected value="date">Päivämäärä</option>
-                                <option value="outId">OutletId</option>
-                                <option value="ale">Alennusprosentti</option>
-                                <option value="price">Hinta</option>
+                                <span th:if="${sort=='pid'}"><option selected value="pid">Pid&dArr;</option></span>
+                                <span th:unless="${sort=='pid'}"><option value="pid">Pid&dArr;</option></span>
+                                <span th:if="${sort=='pidD'}"><option selected value="pidD">Pid&uArr;</option></span>
+                                <span th:unless="${sort=='pidD'}"><option value="pidD">Pid&uArr;</option></span>
+                                <span th:if="${sort=='date'}"><option selected value="date">Päivämäärä&dArr;</option></span>
+                                <span th:unless="${sort=='date'}"><option value="date">Päivämäärä&dArr;</option></span>
+                                <span th:if="${sort=='dateD'}"><option selected value="dateD">Päivämäärä&uArr;</option></span>
+                                <span th:unless="${sort=='dateD'}"><option value="dateD">Päivämäärä&uArr;</option></span>
+                                <span th:if="${sort=='outId'}"><option selected value="outId">OutletId&dArr;</option></span>
+                                <span th:unless="${sort=='outId'}"><option value="outId">OutletId&dArr;</option></span>
+                                <span th:if="${sort=='outIdD'}"><option selected value="outIdD">OutletId&uArr;</option></span>
+                                <span th:unless="${sort=='outIdD'}"><option value="outIdD">OutletId&uArr;</option></span>
+                                <span th:if="${sort=='ale'}"><option selected value="ale">Alennusprosentti&dArr;</option></span>
+                                <span th:unless="${sort=='ale'}"><option value="ale">Alennusprosentti&dArr;</option></span>
+                                <span th:if="${sort=='aleD'}"><option selected value="aleD">Alennusprosentti&uArr;</option></span>
+                                <span th:unless="${sort=='aleD'}"><option value="aleD">Alennusprosentti&uArr;</option></span>
+                                <span th:if="${sort=='price'}"><option selected value="price">Hinta&dArr;</option></span>
+                                <span th:unless="${sort=='price'}"><option value="price">Hinta&dArr;</option></span>
+                                <span th:if="${sort=='priceD'}"><option selected value="priceD">Hinta&uArr;</option></span>
+                                <span th:unless="${sort=='priceD'}"><option value="priceD">Hinta&uArr;</option></span>
                             </select>
                         </div>
                         <div class="col-md-1"><button name="nappi" type="submit" value="haku" class="btn btn-default"><i class="fa fa-search"></i></button></div>
@@ -45,11 +62,11 @@
                 <table class="table">
                 <thead>
                     <tr>
-                        <th><button name="nappi" type="submit" value="IDd">&uArr;</button><button name="nappi" type="submit" value="IDa">&dArr;</button></th>
+                        <th>ID</th>
                         <th class="col-md-6">Tuote</th>
-                        <th>Hinta<br><button name="nappi" type="submit" value="Hinta">&uArr;</button><button name="nappi" type="submit" value="Hintad">&dArr;</button></th>
+                        <th>Hinta</th>
                         <th>Viimeisin</th>
-                        <th>Ale%<br><button name="nappi" type="submit" value="Ale">&uArr;</button><button name="nappi" type="submit" value="Aled">&dArr;</button></th>
+                        <th>Ale%</th>
                         <th>Takuu</th>
                         <th><span title="Kuntoluokka">Kl</span></th>
                         <th><input type="submit" name="nappi" value="A"/></th>
@@ -62,7 +79,7 @@
                 </thead>
                     <tr th:each="outlet : ${outletTuotteet}" class="table">
                         <td><a th:class="${outlet.isDeleted()}" th:title="${'PID'+outlet.pid}" th:href="${'/vkoutlet/?value='+outlet.pid+'&date=&nappi=haku&activity=both'}" th:text="${outlet.outId}">outID</a></td>
-                        <td><a th:class="${outlet.isDeleted()}" th:title="${'PID luotu: '+outlet.pidLuotu}" th:href="${'/vkoutlet/?value='+outlet.similarName()+'&date=&nappi=haku&activity=both'}" th:text="${outlet.name}">TuoteNimi</a></td>
+                        <td><a th:class="${outlet.isDeleted()}" th:title="${'PID luotu: '+outlet.pidLuotu}" th:href="${'/vkoutlet/?value='+outlet.similarName()+'&date=&alkaen=&nappi=haku&activity=both&sort=pid'}" th:text="${outlet.name}">TuoteNimi</a></td>
                         <td><span th:class="${outlet.isDeleted()}" th:text="${#numbers.formatDecimal(outlet.outPrice, 1, 2)}+'€'"></span></td>
                         <td><span th:class="${outlet.isDeleted()}" th:text="${#numbers.formatDecimal(outlet.norPrice, 1, 2)}+'€'"></span></td>
                         <td><span th:class="${outlet.isDeleted()}" th:text="${#numbers.formatDecimal(outlet.alennus == null ? 0 : outlet.alennus, 0, 0)+' %'}"></span></td>

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Sort;
 import kotikokki.domain.OutletTuote;
 
 /**
@@ -17,21 +18,53 @@ import kotikokki.domain.OutletTuote;
  */
 public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     //haut nimen perusteella
-    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
-    List<OutletTuote> haeNimellaKaikistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
-    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
-    List<OutletTuote> haeNimellaAktiivisistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
-    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
-    List<OutletTuote> haeNimellaPoistuneistaAlkaenAsti(String haku); //LocalDate alkaen ja asti
+    //@Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) ORDER BY o.pid, o.deleted DESC, o.priceUpdatedDate DESC")
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND (o.priceUpdatedDate>=?2 OR o.deleted>=?2) AND (o.priceUpdatedDate<=?3 OR o.deleted<=?3)")
+    List<OutletTuote> haeNimellaKaikistaAlkaenAsti(String haku, LocalDate alkaen, LocalDate asti, Sort sort); 
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL AND o.priceUpdatedDate>=?2 AND o.priceUpdatedDate<=?3")
+    List<OutletTuote> haeNimellaAktiivisistaAlkaenAsti(String haku, LocalDate alkaen, LocalDate asti, Sort sort);
+    @Query ("SELECT o FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL AND o.deleted>=?2 AND o.deleted<=?3")
+    List<OutletTuote> haeNimellaPoistuneistaAlkaenAsti(String haku, LocalDate alkaen, LocalDate asti, Sort sort);
     
     
     //haut PID perusteella
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.pid IS ?1 ORDER BY o.priceUpdatedDate DESC")
     List<OutletTuote> activeByPid(int pid);
+    @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NULL AND o.pid IS ?1")
+    List<OutletTuote> activeByPidTEST(int pid,Sort sort);
     @Query ("SELECT o FROM OutletTuote o WHERE o.pid IS ?1 ORDER BY o.deleted DESC,o.priceUpdatedDate DESC")
     List<OutletTuote> allbyPid(int pid);
     @Query ("SELECT o FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.pid IS ?1 ORDER BY o.deleted DESC,o.priceUpdatedDate DESC")
     List<OutletTuote> deletedByPid(int pid);
+    
+    
+    //haut keskiarvoalea varten
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL AND o.deleted>=?2 AND o.deleted<=?3")
+    Double haeNimellaSummaaOutPriceDeleted(String haku,LocalDate alkaen, LocalDate asti);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL AND o.deleted>=?2 AND o.deleted<=?3")
+    Double haeNimellaSummaaNorPriceDeleted(String haku,LocalDate alkaen, LocalDate asti);
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL AND o.priceUpdatedDate>=?2 AND o.priceUpdatedDate<=?3")
+    Double haeNimellaSummaaOutPriceActive(String haku,LocalDate alkaen, LocalDate asti);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL AND o.priceUpdatedDate>=?2 AND o.priceUpdatedDate<=?3")
+    Double haeNimellaSummaaNorPriceActive(String haku,LocalDate alkaen, LocalDate asti);
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND (o.priceUpdatedDate>=?2 OR o.deleted>=?2) AND (o.priceUpdatedDate<=?3 OR o.deleted<=?3)")
+    Double haeNimellaSummaaOutPriceBoth(String haku,LocalDate alkaen, LocalDate asti);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND (o.priceUpdatedDate>=?2 OR o.deleted>=?2) AND (o.priceUpdatedDate<=?3 OR o.deleted<=?3)")
+    Double haeNimellaSummaaNorPriceBoth(String haku,LocalDate alkaen, LocalDate asti);
+    
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL AND o.deleted>=?2 AND o.deleted<=?3 AND o.condition=?4")
+    Double haeNimellaSummaaOutPriceDeletedKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NOT NULL AND o.deleted>=?2 AND o.deleted<=?3 AND o.condition=?4")
+    Double haeNimellaSummaaNorPriceDeletedKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL AND o.priceUpdatedDate>=?2 AND o.priceUpdatedDate<=?3 AND o.condition=?4")
+    Double haeNimellaSummaaOutPriceActiveKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND o.deleted IS NULL AND o.priceUpdatedDate>=?2 AND o.priceUpdatedDate<=?3 AND o.condition=?4")
+    Double haeNimellaSummaaNorPriceActiveKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND (o.priceUpdatedDate>=?2 OR o.deleted>=?2) AND (o.priceUpdatedDate<=?3 OR o.deleted<=?3) AND o.condition=?4")
+    Double haeNimellaSummaaOutPriceBothKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    @Query("SELECT SUM(o.norPrice) FROM OutletTuote o WHERE LOWER(o.name) LIKE LOWER(?1) AND (o.priceUpdatedDate>=?2 OR o.deleted>=?2) AND (o.priceUpdatedDate<=?3 OR o.deleted<=?3) AND o.condition=?4")
+    Double haeNimellaSummaaNorPriceBothKl(String haku,LocalDate alkaen, LocalDate asti, String condition);
+    
     
     //haku outId mukaan
     OutletTuote findByOutId(int id);
@@ -127,7 +160,7 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     long activeTuotemaaraPvm(LocalDate date);
     
     //poistettujen tuotteiden pvm + lkm
-    @Query("SELECT DISTINCT o.deleted FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.deleted > (CURRENT_DATE - 90) ORDER BY o.deleted DESC")
+    @Query("SELECT DISTINCT o.deleted FROM OutletTuote o WHERE o.deleted IS NOT NULL AND o.deleted > (CURRENT_DATE - 30) ORDER BY o.deleted DESC")
     List<LocalDate> deletedPaivamaarat();
     @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.deleted=?1")
     long deletedTuotemaaraPvm(LocalDate date);
@@ -173,7 +206,7 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     @Query (value= "SELECT AVG(deleted - price_updated_date) FROM outlet_tuote WHERE deleted=?1", nativeQuery = true)
     double deletedMyyntiPv(LocalDate date);
     //lisayspvm
-    @Query("SELECT DISTINCT o.firstSeen FROM OutletTuote o WHERE o.firstSeen IS NOT NULL AND o.firstSeen > (CURRENT_DATE -90)ORDER BY o.firstSeen DESC")
+    @Query("SELECT DISTINCT o.firstSeen FROM OutletTuote o WHERE o.firstSeen IS NOT NULL AND o.firstSeen > (CURRENT_DATE -30)ORDER BY o.firstSeen DESC")
     List<LocalDate> lisaysPaivamaarat();
     @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.firstSeen=?1")
     long lisaysTuotemaaraPvm(LocalDate date);
@@ -229,7 +262,7 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     List<OutletTuote> deletedSearchNameWithDate(String haku,LocalDate asti, LocalDate alkaen);
     
     //poistuneiden tuotteiden aleprosentteihin liityvia
-    @Query("SELECT DISTINCT o.condition FROM OutletTuote o WHERE o.deleted IS NOT NULL")
+    @Query("SELECT DISTINCT o.condition FROM OutletTuote o WHERE o.deleted IS NOT NULL ORDER BY o.condition")
     List<String> kuntoluokat();
     @Query ("SELECT SUM (o.outPrice) FROM OutletTuote o WHERE o.condition=?1 AND o.deleted IS NOT NULL")
     Double summaaPoistuneetOutPriceKuntoluokalla(String kuntoluokka);

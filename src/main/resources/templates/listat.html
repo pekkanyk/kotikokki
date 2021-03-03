@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="fragments/layout :: head(title='Kotikokki')" lang="en">
+    <head th:replace="fragments/layout :: head(title='ListaGenerator')" lang="en">
         <meta charset="UTF-8" />
         <title>Otsikko</title>
     </head>
     <body>
-            <div class="container">
+            <div>
             <form method="POST" th:action="@{/listat}" enctype="multipart/form-data" id="listat_form">
                 
                 
                                        
-                    <textarea class="inputbox-pitka" form ="listat_form" name="lista_cp" style="resize: none" rows="15" wrap="none" placeholder="Lisää teksti"></textarea>
-                    <input type="hidden" name="valinnat" value="listat"/>
+                    <textarea form ="listat_form" name="lista_cp" style="resize: none" rows="40"  cols="250" wrap="none" placeholder="Lisää teksti"></textarea>
+                    <input type="hidden" name="valinnat" value="listat"/><br>
                     <input type="submit" value="GENERATE"/>
                 
             </form>

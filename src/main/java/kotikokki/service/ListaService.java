@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import kotikokki.domain.ListaRivi;
+import kotikokki.domain.OutletTuote;
 import kotikokki.domain.PidPackage;
 import kotikokki.repository.OutletTuoteRepository;
 import kotikokki.repository.PidPackageRepository;
@@ -36,15 +37,15 @@ public class ListaService {
         String line = scanner.nextLine();
         String rivi = "";
         String[] rivi_array = line.split("\t");
-        if (rivi_array.length==7){
+        if (rivi_array.length==8){
             
             if (paikka.length()>1){
-                if (rivi_array[4].length()>1 || rivi_array[3].contains("Matka")) rivi=rivi_array[5];
+                if (rivi_array[4].length()>1 || rivi_array[3].contains("Matka")) rivi=rivi_array[6];
                 if (!rivi.equals("")) {
                     rivi=rivi_array[4]+" "+ rivi;
                     if (rivi_array[3].contains("Matka")) rivi=rivi+ ", MATKAHUOLTO";
                     if (!rivi_array[2].equals("Ei")) rivi=rivi+ ", HENKSU";
-                    String[] riviOsina = rivi_array[5].split(" ");
+                    String[] riviOsina = rivi_array[6].split(" ");
                     String outId = riviOsina[0].substring(3).trim();
                 //lista.add(rivi);
                 lista.add(new ListaRivi(Integer.valueOf(outId),rivi));
@@ -52,19 +53,25 @@ public class ListaService {
             }
             else {
             
-            String[] riviOsina = rivi_array[5].split(" ");
+            String[] riviOsina = rivi_array[6].split(" ");
             String outId = riviOsina[0].substring(3).trim();
             String til = "";
+            String daysActive = "";
             int tilavuus = 0;
             int pid = 0;
             if (rivi_array[4].equals(paikka) && !rivi_array[3].contains("Matka")) {
-                rivi = rivi_array[5];
+                rivi = rivi_array[6]+" <-CHECK ID";
             //}
             PidPackage tiedot = new PidPackage();
+            
             if (outletTuoteRepository.findByOutId(Integer.valueOf(outId))!=null){
-                pid = outletTuoteRepository.findByOutId(Integer.valueOf(outId)).getPid();
-                String tuote = outletTuoteRepository.findByOutId(Integer.valueOf(outId)).getName();
-                if (tuote.length()>70) rivi = "OUT"+outId+" ("+tuote.substring(0,70)+")";
+                OutletTuote outTuote = outletTuoteRepository.findByOutId(Integer.valueOf(outId));
+                //pid = outletTuoteRepository.findByOutId(Integer.valueOf(outId)).getPid();
+                //String tuote = outletTuoteRepository.findByOutId(Integer.valueOf(outId)).getName();
+                pid = outTuote.getPid();
+                String tuote = outTuote.getName();
+                daysActive = outTuote.daysActiveDeleted();
+                if (tuote.length()>67) rivi = "OUT"+outId+" ("+tuote.substring(0,67)+")";
                 else rivi = "OUT"+outId+" ("+tuote+")";
             }
             if (pid!=0){
@@ -79,8 +86,8 @@ public class ListaService {
             //}
             
             if (!rivi.equals("")) {
-                if (!rivi_array[2].equals("Ei")) rivi="H "+rivi+" "+til;
-                else rivi="o "+rivi+" "+til;
+                if (!rivi_array[2].equals("Ei")) rivi="H "+rivi+" "+til+" "+daysActive;
+                else rivi="o "+rivi+" "+til+" "+daysActive;
                 //lista.add(rivi);
                 lista.add(new ListaRivi(Integer.valueOf(outId),rivi));
             }

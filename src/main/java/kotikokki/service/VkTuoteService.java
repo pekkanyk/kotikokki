@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Sort;
 //import org.springframework.data.domain.Example;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -184,24 +185,157 @@ public class VkTuoteService {
         this.listaHaettu();
     }
     
-    public List<OutletTuote> haeNimellaAlkaenAsti(String haku, String activity){
+    public List<OutletTuote> haeNimellaAlkaenAsti(String haku, String activity, String sortStr, String alkaen, String asti){
         List<OutletTuote> outletTuotteet = new ArrayList();
+        Sort sort = Sort.by("pid").and(Sort.by("deleted").descending()).and(Sort.by("priceUpdatedDate").descending());
+        if (sortStr.equals("price")){
+            sort = Sort.by("outPrice").and(sort);    
+        }
+        else if (sortStr.equals("priceD")){
+            sort = Sort.by("outPrice").descending().and(sort);    
+        }
+        else if(sortStr.equals("ale")){
+            sort = Sort.by("alennus").and(sort);
+        }
+        else if(sortStr.equals("aleD")){
+            sort = Sort.by("alennus").descending().and(sort);
+        }
+        else if(sortStr.equals("date")){
+            sort = Sort.by("deleted").descending().and(Sort.by("priceUpdatedDate").descending()); 
+        }
+        else if(sortStr.equals("dateD")){
+            sort = Sort.by("deleted").and(Sort.by("priceUpdatedDate")); 
+        }
+        else if(sortStr.equals("outId")){
+            sort = Sort.by("outId"); 
+        }
+        else if(sortStr.equals("outIdD")){
+            sort = Sort.by("outId").descending(); 
+        }
+        else if (sortStr.equals("pid") && !activity.equals("both")){
+            sort = Sort.by("pid");
+        }
+        else if (sortStr.equals("pidD") && !activity.equals("both")){
+            sort = Sort.by("pid").descending();
+        }
+        LocalDate from = LocalDate.parse("2020-01-01");
+        LocalDate to = LocalDate.now();
+        if (!alkaen.equals("")) from = LocalDate.parse(alkaen);
+        if (!asti.equals("")) to = LocalDate.parse(asti);
+        
         haku = "%"+haku+"%";
         if (activity.equals("active")){
-            outletTuotteet = outletTuoteRepository.haeNimellaAktiivisistaAlkaenAsti(haku);
+            outletTuotteet = outletTuoteRepository.haeNimellaAktiivisistaAlkaenAsti(haku, from, to, sort);
         }
         else if (activity.equals("deleted")){
-            outletTuotteet = outletTuoteRepository.haeNimellaPoistuneistaAlkaenAsti(haku);
+            outletTuotteet = outletTuoteRepository.haeNimellaPoistuneistaAlkaenAsti(haku, from, to, sort);
         }
         else {
-            outletTuotteet = outletTuoteRepository.haeNimellaKaikistaAlkaenAsti(haku);
+            outletTuotteet = outletTuoteRepository.haeNimellaKaikistaAlkaenAsti(haku, from, to, sort);
         }
         
         return outletTuotteet;
     }
     
+    public double keskiArvoAlennusAlkaenAsti(String haku, String activity, String alkaen, String asti){
+        LocalDate from = LocalDate.parse("2020-01-01");
+        LocalDate to = LocalDate.now();
+        if (!alkaen.equals("")) from = LocalDate.parse(alkaen);
+        if (!asti.equals("")) to = LocalDate.parse(asti);
+        double alePros = 0.0;
+        Double outHinnat =0.0;
+        Double norHinnat =0.0;
+        haku = "%"+haku+"%";
+        if (activity.equals("deleted")){
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceDeleted(haku, from, to);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceDeleted(haku, from, to);
+        }
+        else if (activity.equals("active")){
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceActive(haku, from, to);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceActive(haku, from, to);
+        }
+        else {
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceBoth(haku, from, to);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceBoth(haku, from, to);
+        }
+        
+        if (norHinnat == null ) norHinnat = 0.0;
+        if (outHinnat == null ) outHinnat = 0.0;
+        if (norHinnat>0.0){
+            alePros = 100*(1-(outHinnat)/norHinnat);
+        }
+        
+        return alePros;
+    }
+    public double keskiArvoAlennusAlkaenAstiKl(String haku, String activity, String alkaen, String asti,String condition){
+        LocalDate from = LocalDate.parse("2020-01-01");
+        LocalDate to = LocalDate.now();
+        if (!alkaen.equals("")) from = LocalDate.parse(alkaen);
+        if (!asti.equals("")) to = LocalDate.parse(asti);
+        double alePros = 0.0;
+        Double outHinnat =0.0;
+        Double norHinnat =0.0;
+        haku = "%"+haku+"%";
+        if (activity.equals("deleted")){
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceDeletedKl(haku, from, to, condition);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceDeletedKl(haku, from, to, condition);
+        }
+        else if (activity.equals("active")){
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceActiveKl(haku, from, to, condition);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceActiveKl(haku, from, to, condition);
+        }
+        else {
+            outHinnat = outletTuoteRepository.haeNimellaSummaaOutPriceBothKl(haku, from, to, condition);
+            norHinnat = outletTuoteRepository.haeNimellaSummaaNorPriceBothKl(haku, from, to, condition);
+        }
+        
+        if (norHinnat == null ) norHinnat = 0.0;
+        if (outHinnat == null ) outHinnat = 0.0;
+        if (norHinnat>0.0){
+            alePros = 100*(1-(outHinnat)/norHinnat);
+        }
+        
+        return alePros;
+    }
+    
+    public String aletkuntoluokittain(String haku, String activity, String alkaen, String asti){
+        String kuntoluokat[] = {"A","B","C","D"};
+        String uloste = "";
+        for (String kl:kuntoluokat){
+            Double kaAle = this.keskiArvoAlennusAlkaenAstiKl(haku, activity, alkaen, asti, kl);
+            if (kaAle!=0){
+                uloste = uloste+kl+": "+String.format("%.2f", kaAle)+"% ";
+            }
+            
+        }
+        return uloste;
+    }
+    
+    public Double outPriceSumma(String haku, String activity, String alkaen, String asti){
+        LocalDate from = LocalDate.parse("2020-01-01");
+        LocalDate to = LocalDate.now();
+        if (!alkaen.equals("")) from = LocalDate.parse(alkaen);
+        if (!asti.equals("")) to = LocalDate.parse(asti);
+        Double summa = 0.0;
+        haku = "%"+haku+"%";
+        if (activity.equals("deleted")){
+            summa=outletTuoteRepository.haeNimellaSummaaOutPriceDeleted(haku, from, to);
+        }
+        else if (activity.equals("active")){
+            summa=outletTuoteRepository.haeNimellaSummaaOutPriceActive(haku, from, to);
+        }
+        else {
+            summa=outletTuoteRepository.haeNimellaSummaaOutPriceBoth(haku, from, to);
+        }
+        return summa;
+    }
+    
     public List<OutletTuote> haePidMukaan(int pid, String activity){
-        if (activity.equals("active")) return outletTuoteRepository.activeByPid(pid);
+        Sort sort = Sort.by(Sort.Direction.ASC,"pid");
+        
+        if (activity.equals("active")) {
+            return outletTuoteRepository.activeByPidTEST(pid,sort);
+        }
         else if (activity.equals("deleted")) return outletTuoteRepository.deletedByPid(pid);
         else return outletTuoteRepository.allbyPid(pid);
     }
@@ -213,7 +347,7 @@ public class VkTuoteService {
         boolean listattava = false;
         for (int outId:outletTuoteRepository.activeDistinctProductPids()){
             listattava = false;
-            if (outletTuoteRepository.countPidAll(outId)>1 && outletTuoteRepository.countPidDeleted(outId)>0){
+            if ((outletTuoteRepository.countPidAll(outId)>1 && outletTuoteRepository.countPidDeleted(outId)>0)||(outletTuoteRepository.countPid(outId)>=1)){
                 listattava = false;
                 for (OutletTuote outTuote:outletTuoteRepository.activeByPid(outId)){
                     if (outTuote.getPriceUpdatedDate().isBefore(LocalDate.now().minusDays(paivia+1))){
@@ -259,7 +393,8 @@ public class VkTuoteService {
     
     
     //@Scheduled(fixedDelay = 3600000, initialDelay = 100000)
-    @Scheduled(cron = "0 58 5-17,23 * * ?", zone = "Europe/Helsinki")
+    //@Scheduled(cron = "0 58 5-17,23 * * ?", zone = "Europe/Helsinki")
+    @Scheduled(cron = "0 8/10 5-23 * * ?", zone = "Europe/Helsinki")
     public void automaattiReload() throws IOException {
 	ZoneId zone = ZoneId.of("Europe/Helsinki");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");

@@ -102,6 +102,7 @@ public class DefaultController {
         model.addAttribute("numerot", vkTuoteService.countLastNbrs());
         model.addAttribute("activeKa", vkTuoteService.keskimaarinAktiivisena());
         model.addAttribute("deletedKuntoluokatPros", vkTuoteService.deletedProssatKuntoluokilla());
+        model.addAttribute("today",LocalDate.now().toString());
         return "stats";
     }
     
@@ -160,11 +161,19 @@ public class DefaultController {
     public String outletSort(Model model, @RequestParam(required = false) String value, 
                                           @RequestParam(required = false) String nappi, 
                                           @RequestParam(required = false) String date,
-                                          @RequestParam(required = false) String activity){
+                                          @RequestParam(required = false) String alkaen,
+                                          @RequestParam(required = false) String activity,
+                                          @RequestParam(required = false) String sort    ){
+        model.addAttribute("hakusana",value);
+        model.addAttribute("date",date);
+        model.addAttribute("alkaen",alkaen);
+        model.addAttribute("activity",activity);
+        model.addAttribute("sort",sort);
         model.addAttribute("totalRows",vkTuoteService.rivienLkm("active"));
         model.addAttribute("listaHaettu",vkTuoteService.listaHaettuAika());
         model.addAttribute("twoWeeksAgo",LocalDate.now().minusDays(14).toString());
         model.addAttribute("monthAgo",LocalDate.now().minusDays(32).toString());
+        model.addAttribute("today",LocalDate.now().toString());
         if (nappi == null) {
             nappi="Ale";
             value="10";
@@ -184,10 +193,14 @@ public class DefaultController {
                 outletTuotteet = vkTuoteService.haePidMukaan(Integer.valueOf(value),activity);
             }
             else {
-                outletTuotteet = vkTuoteService.haeNimellaAlkaenAsti(value, activity);
+                outletTuotteet = vkTuoteService.haeNimellaAlkaenAsti(value, activity, sort, alkaen, date);
+                model.addAttribute("alennus",vkTuoteService.keskiArvoAlennusAlkaenAsti(value, activity, alkaen, date));
+                model.addAttribute("aletKuntoluokittain",vkTuoteService.aletkuntoluokittain(value, activity, alkaen, date));
+                model.addAttribute("sumOutPrice",vkTuoteService.outPriceSumma(value, activity, alkaen, date));
             }
             model.addAttribute("outletTuotteet", outletTuotteet);
             model.addAttribute("riveja",outletTuotteet.size());
+            
         }
         
         
@@ -321,6 +334,9 @@ public class DefaultController {
     if (strNum == null) {
         return false;
     }
+    if (strNum.matches(".*[a-z].*") || strNum.matches(".*[A-Z].*")) { 
+        return false;
+}
     try {
         double d = Double.parseDouble(strNum);
     } catch (NumberFormatException nfe) {

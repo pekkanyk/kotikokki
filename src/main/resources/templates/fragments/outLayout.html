@@ -45,19 +45,25 @@
                                         <li><a th:href="${'/vkoutlet?value=98&date='+monthAgo+'&nappi=Muuttunut'}">Yli 32 pv vanhat, yli 100€ hintaiset</a></li>
                                         <li><a th:href="@{/vkoutlet?value=5&nappi=D&date=}">Yli 5 kpl samalla PID:llä</a></li>
                                         <li><a th:href="@{/vkoutlet?value=14&nappi=A&date=}">Yli 14 pv vanhat ja vähintään 14 pv poistumisesta</a></li>
+                                        <li><a th:href="@{/vkoutlet?value=v&nappi=D&date=}">Dumppituotteita jotka tilattavissa</a></li>
 				</ul>
 			</li>
 			<li class="nav-item"><a th:href="@{/vkoutlet/reload}" class="nav-link">Reload</a></li>
-			<li class="nav-item"><a th:href="@{/vkoutlet/historia}" class="nav-link">Historia</a></li>
+			<li class="nav-item"><a th:href="${'/vkoutlet?activity=deleted&value=&alkaen='+today+'&date='+today+'&sort=pid&nappi=haku'}" class="nav-link">Tänään poistuneet</a></li>
+                        <li class="nav-item"><a th:href="${'/vkoutlet?activity=active&value=&alkaen='+today+'&date='+today+'&sort=pid&nappi=haku'}" class="nav-link">Tänään päivitetyt</a></li>
 		</ul>
                 <ul class="nav navbar-nav navbar-right ml-auto">
-                    <li class="nav-item"><div th:text="${'Noudettu: ' +listaHaettu+' '+riveja + ' / ' + totalRows+' '}">0</div></li>
+                    <li class="nav-item">
+                        <div th:text="${'Noudettu: ' +listaHaettu}">0</div>
+                        <div th:text="${'Aktiivisia: ' + totalRows}">0</div>
+                    </li>
 		</ul>
 	</div>
 </nav>
                         
             </div>
       </div>
+                
 </div>   
             
         </header>
