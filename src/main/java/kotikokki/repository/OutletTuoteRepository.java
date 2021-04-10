@@ -206,7 +206,8 @@ public interface OutletTuoteRepository extends JpaRepository<OutletTuote, Long>{
     @Query (value= "SELECT AVG(deleted - price_updated_date) FROM outlet_tuote WHERE deleted=?1", nativeQuery = true)
     double deletedMyyntiPv(LocalDate date);
     //lisayspvm
-    @Query("SELECT DISTINCT o.firstSeen FROM OutletTuote o WHERE o.firstSeen IS NOT NULL AND o.firstSeen > (CURRENT_DATE -30)ORDER BY o.firstSeen DESC")
+    //@Query("SELECT DISTINCT o.firstSeen FROM OutletTuote o WHERE o.firstSeen IS NOT NULL AND o.firstSeen > (CURRENT_DATE -60)ORDER BY o.firstSeen DESC")
+    @Query("SELECT DISTINCT o.firstSeen FROM OutletTuote o WHERE o.firstSeen IS NOT NULL ORDER BY o.firstSeen DESC")
     List<LocalDate> lisaysPaivamaarat();
     @Query ("SELECT COUNT (o) FROM OutletTuote o WHERE o.firstSeen=?1")
     long lisaysTuotemaaraPvm(LocalDate date);

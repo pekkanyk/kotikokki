@@ -410,6 +410,9 @@ public class VkTuoteService {
         List<PvmStatistiikka> paivamaarat = new ArrayList();
         for (LocalDate pvm:outletTuoteRepository.lisaysPaivamaarat()){
             if (outletTuoteRepository.lisaysPoistuneetPvm(pvm)==0) paivamaarat.add(new PvmStatistiikka(pvm,outletTuoteRepository.lisaysTuotemaaraPvm(pvm),this.kaikkiLisatytKeskimaarinAktiivisena(pvm),0.0,outletTuoteRepository.lisaysPoistuneetPvm(pvm)));
+            else if (outletTuoteRepository.lisaysTuotemaaraPvm(pvm) == outletTuoteRepository.lisaysPoistuneetPvm(pvm)){
+                //nop
+            }
             else paivamaarat.add(new PvmStatistiikka(pvm,outletTuoteRepository.lisaysTuotemaaraPvm(pvm),this.kaikkiLisatytKeskimaarinAktiivisena(pvm),outletTuoteRepository.deletedLisaysPv(pvm),outletTuoteRepository.lisaysPoistuneetPvm(pvm)));
         }
         return paivamaarat;
@@ -568,6 +571,62 @@ public class VkTuoteService {
                 }
                 if (oldEnough) tuotteet.addAll(outletTuoteRepository.activeByPid(pid));
             }
+        }
+        return tuotteet;
+    }
+    
+    public List<OutletTuote>eriHinnatB(){
+        List<OutletTuote> tuotteet = new ArrayList();
+        boolean eriHinta = false;
+        for (int pid:outletTuoteRepository.activeDistinctProductPids()){
+            eriHinta = false;
+            if (outletTuoteRepository.countPid(pid)>1){
+                List<OutletTuote> outTuotteet = outletTuoteRepository.activeByPid(pid);
+                double hinta = 0.0;
+                for (OutletTuote out:outTuotteet){
+                    if (out.getCondition().equals("B")) {
+                        hinta = out.getOutPrice();
+                        break;
+                    }
+                }
+                
+                for (OutletTuote out:outTuotteet){
+                    if (out.getOutPrice() != hinta && out.getCondition().equals("B")){
+                        eriHinta = true;
+                        break;
+                    }
+                }
+            }
+            if (eriHinta) tuotteet.addAll(outletTuoteRepository.activeByPid(pid));
+            
+        }
+        return tuotteet;
+    }
+    
+    public List<OutletTuote>eriHinnatA(){
+        List<OutletTuote> tuotteet = new ArrayList();
+        boolean eriHinta = false;
+        for (int pid:outletTuoteRepository.activeDistinctProductPids()){
+            eriHinta = false;
+            if (outletTuoteRepository.countPid(pid)>1){
+                List<OutletTuote> outTuotteet = outletTuoteRepository.activeByPid(pid);
+                double hinta = 0.0;
+                for (OutletTuote out:outTuotteet){
+                    if (out.getCondition().equals("A")) {
+                        hinta = out.getOutPrice();
+                        break;
+                    }
+                }
+                
+                for (OutletTuote out:outTuotteet){
+                    if (out.getOutPrice() != hinta && out.getCondition().equals("A")){
+                        eriHinta = true;
+                        break;
+                    }
+                }
+            }
+            if (eriHinta) tuotteet.addAll(outletTuoteRepository.activeByPid(pid));
+            
         }
         return tuotteet;
     }

@@ -37,10 +37,11 @@ public class ListaService {
         String line = scanner.nextLine();
         String rivi = "";
         String[] rivi_array = line.split("\t");
+        
         if (rivi_array.length==8){
             
             if (paikka.length()>1){
-                if (rivi_array[4].length()>1 || rivi_array[3].contains("Matka")) rivi=rivi_array[6];
+                if (rivi_array[4].length()>2 || rivi_array[3].contains("Matka")) rivi=rivi_array[6];
                 if (!rivi.equals("")) {
                     rivi=rivi_array[4]+" "+ rivi;
                     if (rivi_array[3].contains("Matka")) rivi=rivi+ ", MATKAHUOLTO";
@@ -52,14 +53,15 @@ public class ListaService {
             }
             }
             else {
-            
+            //String paikka_vikaNro = paikka.substring(paikka.length()-1);
             String[] riviOsina = rivi_array[6].split(" ");
             String outId = riviOsina[0].substring(3).trim();
             String til = "";
             String daysActive = "";
             int tilavuus = 0;
             int pid = 0;
-            if (rivi_array[4].equals(paikka) && !rivi_array[3].contains("Matka")) {
+            String hakuPaikka = rivi_array[4].substring(rivi_array[4].length()-1);
+            if (hakuPaikka.equals(paikka) && !rivi_array[3].contains("Matka")) {
                 rivi = rivi_array[6]+" <-CHECK ID";
             //}
             PidPackage tiedot = new PidPackage();

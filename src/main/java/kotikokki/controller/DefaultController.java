@@ -91,6 +91,7 @@ public class DefaultController {
     public String statistiikka(Model model){
         model.addAttribute("listaHaettu",vkTuoteService.listaHaettuAika());
         model.addAttribute("totalRows_a",vkTuoteService.rivienLkm("active"));
+        model.addAttribute("totalRows",vkTuoteService.rivienLkm("active"));
         model.addAttribute("totalRows_d",vkTuoteService.rivienLkm("deleted"));
         model.addAttribute("active_distinct",vkTuoteService.aktiivisetEriTuotteet());
         model.addAttribute("active_paivat", vkTuoteService.aktiivisetPvm());
@@ -102,6 +103,9 @@ public class DefaultController {
         model.addAttribute("numerot", vkTuoteService.countLastNbrs());
         model.addAttribute("activeKa", vkTuoteService.keskimaarinAktiivisena());
         model.addAttribute("deletedKuntoluokatPros", vkTuoteService.deletedProssatKuntoluokilla());
+        model.addAttribute("today",LocalDate.now().toString());
+        model.addAttribute("twoWeeksAgo",LocalDate.now().minusDays(14).toString());
+        model.addAttribute("monthAgo",LocalDate.now().minusDays(32).toString());
         model.addAttribute("today",LocalDate.now().toString());
         return "stats";
     }
@@ -275,6 +279,16 @@ public class DefaultController {
             }
             else if (value.equals("v")){
                 List<OutletTuote> lista = vkTuoteService.dumppiVarastolla();
+                model.addAttribute("outletTuotteet", lista);
+                model.addAttribute("riveja",lista.size());
+            }
+            else if (value.equals("d_B")){
+                List<OutletTuote> lista = vkTuoteService.eriHinnatB();
+                model.addAttribute("outletTuotteet", lista);
+                model.addAttribute("riveja",lista.size());
+            }
+            else if (value.equals("d_A")){
+                List<OutletTuote> lista = vkTuoteService.eriHinnatA();
                 model.addAttribute("outletTuotteet", lista);
                 model.addAttribute("riveja",lista.size());
             }

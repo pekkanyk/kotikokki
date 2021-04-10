@@ -243,7 +243,7 @@ public class OutletTuote{
     public String daysActiveDeleted(){
         String days="-";
         if (firstSeen.isAfter(LocalDate.parse("2020-12-22"))){
-            days = String.valueOf(ChronoUnit.DAYS.between(firstSeen, deleted));
+            days = String.valueOf(ChronoUnit.DAYS.between(firstSeen, LocalDate.now()));
         }
         return days;
     }
